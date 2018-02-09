@@ -40,16 +40,16 @@ const Game = {
 
     // TODO make function which will parse days to date (extra needed)
 
-    getDate     : function ()
+    getDate         : function ()
     {
         return day + '/' + week + '/' + month + '/' + year;
     },
 
-    events      : [],
+    events          : [],
 
-    notifications : [],
+    notifications   : [],
 
-    pushEvent   : function ( obj )
+    pushEvent       : function ( obj )
     {
         const _this = this;
 
@@ -82,48 +82,54 @@ const Game = {
         this.notifications.push(alert(obj.msg));
     },
 
-    init        : function ()
+    init            : function ()
     {
         const DAY_INTERVAL = 2000;
 
         const date = setInterval( () => {
-
             if (this.events.length > 0)
-        {
-            let _this = this;
+            {
+                let _this = this;
 
-            this.events.forEach(function (event) {
-                if (event.triggerDate === _this.getDate())
-                {
-                    event.triggerFn();
-                    _this.events = _this.events.filter( (e) => e.eventId !== event.eventId );
-                }
-            });
-        }
+                this.events.forEach(function (event) {
+                    if (event.triggerDate === _this.getDate())
+                    {
+                        event.triggerFn();
+                        _this.events = _this.events.filter( (e) => e.eventId !== event.eventId );
+                    }
 
-        day = day + 1;
+                    if (event.triggerDate === "monthly")
+                    {
+                        if (day === 7 && week === 4)
+                        {
+                            event.triggerFn();
+                        }
+                    }
+                });
+            }
 
-        if (day > 7 )
-        {
-            week = week + 1;
-            day = 1;
-        }
+            day = day + 1;
 
-        if (week > 4)
-        {
-            month = month + 1;
-            week = 1;
-        }
+            if (day > 7 )
+            {
+                week = week + 1;
+                day = 1;
+            }
 
-        if (month > 12)
-        {
-            year = year + 1;
-            month = 1;
-        }
+            if (week > 4)
+            {
+                month = month + 1;
+                week = 1;
+            }
 
-        console.log("Day: " + day + ", Week: " + week + ", Month: " + month + ", Year: " + year);
+            if (month > 12)
+            {
+                year = year + 1;
+                month = 1;
+            }
 
-    }, DAY_INTERVAL);
+            console.log("Day: " + day + ", Week: " + week + ", Month: " + month + ", Year: " + year);
+        }, DAY_INTERVAL);
     }
 };
 
@@ -151,6 +157,7 @@ class TeamManager {
 class Team {
 
     constructor (title, managerData) {
+        let _this       = this;
         this.id         = teamId++;
         this.title      = title;
         this.manager    = managerData;
@@ -168,6 +175,15 @@ class Team {
         {
             this.title =  this.manager.nick + "\'s team";
         }
+
+        Game.pushEvent({
+            eventId     : "salary",
+            triggerDate : "monthly",
+            triggerFn   : function () {
+                _this.manager.money -= 100;
+                console.log(_this.manager.money);
+            }
+        });
     }
 
     findPlayer (days) {
@@ -204,19 +220,11 @@ class Team {
             });
         }
 
-        Game.pushEvent({
-            eventId : "ewrwer",
-            triggerDate : '4/2/1/1',
-            triggerFn : function () {
-                console.log(playersFound);
-            }
-        });
-
         if (this.players.length > 4)
         {
             Game.pushEvent({
                 eventId     : "salary",
-                triggerDate : Game.getDate(),
+                triggerDate : 'monthly',
                 triggerFn   : function () {
                     console.log("Now you have to pay salary to your team members.");
                     _this.manager.money -= 100;
@@ -240,9 +248,9 @@ class Team {
 
         const intervalId = setInterval( () => {
             this.players.forEach( (player) => {
-            player.teamExp += Math.round(Math.random() * 10) + 1;
-    } );
-    }, INTERVAL);
+                player.teamExp += Math.round(Math.random() * 10) + 1;
+            } );
+        }, INTERVAL);
 
         setTimeout(() => clearInterval(intervalId), DURATION);
     };
@@ -250,14 +258,3 @@ class Team {
 }
 
 Game.init();
-
-Game.pushEvent({
-    eventId     : "salary",
-    triggerDate : '4/2/1/1',
-    triggerFn   : function () {
-        Game.createNotification({
-            title : 'Test',
-            msg : "testing notification system."
-        });
-    }
-});

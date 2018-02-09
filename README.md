@@ -1,5 +1,4 @@
 # Dota Team Manager Simulator
-___
 
 ## Main Idea :
 
@@ -17,3 +16,4 @@ Your role is to be a manger of a your own DOTA 2 team. As a manger you can:
 #### Make your dream team!
 
 (Further, with development progress these futures will be updated)
+___
