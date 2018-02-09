@@ -46,6 +46,29 @@ const Game = {
 
     notifications   : [],
 
+    daysToDate      : function ( days )
+    {
+        let daysTotal = days + day;
+
+        let newDays = daysTotal % 7; // 1 day
+
+        let weeksTotal = Math.round(daysTotal / 7) + week;
+
+        let newWeeks = weeksTotal % 4; // 3 weeks
+
+        newWeeks = newWeeks === 0 ? 1 : newWeeks;
+
+        let monthsTotal = Math.floor(weeksTotal / 4) + month; // 13
+
+        let newMonth = monthsTotal % 12;
+
+        let yearsTotal = Math.round(monthsTotal / 12) + year;
+
+        let newYear = yearsTotal % 12;
+
+        return newDays + '/' + newWeeks + '/' + newMonth + '/' + newYear;
+    },
+
     getDate         : function ()
     {
         return day + '/' + week + '/' + month + '/' + year;
@@ -135,6 +158,8 @@ const Game = {
             }, DAY_INTERVAL);
 
             this.initialized = true;
+
+            console.log(Game.daysToDate(30));
         }
     }
 };
