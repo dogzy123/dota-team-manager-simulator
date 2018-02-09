@@ -40,19 +40,20 @@ const Game = {
 
     // TODO make function which will parse days to date (extra needed)
 
-    getDate         : function ()
-    {
-        return day + '/' + week + '/' + month + '/' + year;
-    },
+    initialized     : false,
 
     events          : [],
 
     notifications   : [],
 
+    getDate         : function ()
+    {
+        return day + '/' + week + '/' + month + '/' + year;
+    },
+
     pushEvent       : function ( obj )
     {
         const _this = this;
-
         let uniqueId = true;
 
         if (this.events.length > 0 )
@@ -84,61 +85,77 @@ const Game = {
 
     init            : function ()
     {
-        const DAY_INTERVAL = 2000;
+        if (!this.initialized)
+        {
+            const DAY_INTERVAL = 2000;
 
-        const date = setInterval( () => {
-            if (this.events.length > 0)
-            {
-                let _this = this;
+            const date = setInterval( () => {
+                if (this.events.length > 0)
+                {
+                    let _this = this;
 
-                this.events.forEach(function (event) {
-                    if (event.triggerDate === _this.getDate())
-                    {
-                        event.triggerFn();
-                        _this.events = _this.events.filter( (e) => e.eventId !== event.eventId );
-                    }
-
-                    if (event.triggerDate === "monthly")
-                    {
-                        if (day === 7 && week === 4)
+                    this.events.forEach(function (event) {
+                        if (event.triggerDate === _this.getDate())
                         {
                             event.triggerFn();
+                            _this.events = _this.events.filter( (e) => e.eventId !== event.eventId );
                         }
-                    }
-                });
-            }
 
-            day = day + 1;
+                        if (event.triggerDate === "monthly")
+                        {
+                            if (day === 7 && week === 4)
+                            {
+                                event.triggerFn();
+                            }
+                        }
+                    });
+                }
 
-            if (day > 7 )
-            {
-                week = week + 1;
-                day = 1;
-            }
+                day = day + 1;
 
-            if (week > 4)
-            {
-                month = month + 1;
-                week = 1;
-            }
+                if (day > 7 )
+                {
+                    week = week + 1;
+                    day = 1;
+                }
 
-            if (month > 12)
-            {
-                year = year + 1;
-                month = 1;
-            }
+                if (week > 4)
+                {
+                    month = month + 1;
+                    week = 1;
+                }
 
-            console.log("Day: " + day + ", Week: " + week + ", Month: " + month + ", Year: " + year);
-        }, DAY_INTERVAL);
+                if (month > 12)
+                {
+                    year = year + 1;
+                    month = 1;
+                }
+
+                console.log("Day: " + day + ", Week: " + week + ", Month: " + month + ", Year: " + year);
+            }, DAY_INTERVAL);
+
+            this.initialized = true;
+        }
     }
 };
 
 class TeamManager {
 
     constructor (name = "Player") {
+        const _this = this;
+
         this.nick    = name;
         this.teams   = [];
         this.money   = 1000;
+
+        // monthly costs like food, clothes etc.
+        Game.pushEvent({
+            eventId : 'DTMS-EVENT-MONTHLY-COSTS',
+            triggerDate : "monthly",
+            triggerFn : function () {
+                _this.money = _this.money - 150;
+            }
+        });
     }
 
     createTeam (teamTitle) {
@@ -175,15 +192,6 @@ class Team {
         {
             this.title =  this.manager.nick + "\'s team";
         }
-
-        Game.pushEvent({
-            eventId     : "salary",
-            triggerDate : "monthly",
-            triggerFn   : function () {
-                _this.manager.money -= 100;
-                console.log(_this.manager.money);
-            }
-        });
     }
 
     findPlayer (days) {

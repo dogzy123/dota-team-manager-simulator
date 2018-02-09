@@ -2,7 +2,7 @@
 
 ## Main Idea :
 
-If you are interested in Dota 2 and it's professional games - this game is for you!
+If you are interested in Dota 2 and competitive games - this game is for you!
 Your role is to be a manger of a your own DOTA 2 team. As a manger you can:
 
 * Create a team.
