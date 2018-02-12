@@ -1,0 +1,22 @@
+{
+  "name": "dota-team-manger-simulator",
+  "version": "0.0.1",
+  "description": "Dota Team Manager Simulator",
+  "main": "dtms-window.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+  "type": "git",
+    "url": "git+https://github.com/dogzy123/dota-team-manger-simulator.git"
+  },
+  "author": "Ilya Gursky",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dogzy123/dota-team-manger-simulator/issues"
+  },
+  "homepage": "https://github.com/dogzy123/dota-team-manger-simulator#readme",
+  "dependencies": {
+    "electron": "^1.8.2"
+  }
+}

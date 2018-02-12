@@ -1,5 +1,5 @@
-require(['js/playersDB.js'], function (players) {
-    const PLAYERS_DB = players.players;  //array of players
+    // players database temporary deleted
+    //const PLAYERS_DB = players.players;  //array of players
 
     let teamId = 0, managerId = 0;
 
@@ -134,6 +134,9 @@ require(['js/playersDB.js'], function (players) {
                         month = 1;
                     }
 
+
+                    document.getElementById('date').innerText = "Day: " + day + ", Week: " + week + ", Month: " + month + ", Year: " + year;
+
                     console.log("Day: " + day + ", Week: " + week + ", Month: " + month + ", Year: " + year);
                 }, DAY_INTERVAL );
 
@@ -215,53 +218,7 @@ require(['js/playersDB.js'], function (players) {
             teamId++;
         }
 
-        findPlayer (days) {
-            const _this = this;
-
-            let playersFound = [];
-
-            if (days <= 3)
-            {
-                playersDB.forEach(function (el) {
-                    if (el.mmr < 3500)
-                    {
-                        playersFound.push(el);
-                    }
-                });
-            }
-
-            if (days > 3 && days <= 7)
-            {
-                playersDB.forEach(function (el) {
-                    if (el.mmr > 3500 && el.mmr < 4500)
-                    {
-                        playersFound.push(el);
-                    }
-                })
-            }
-
-            if (days > 7)
-            {
-                playersDB.forEach(function (el) {
-                    if (el.mmr > 4500)
-                    {
-                        playersFound.push(el);
-                    }
-                });
-            }
-
-            if (this.players.length > 4)
-            {
-                Game.pushEvent({
-                    eventId     : "salary",
-                    triggerDate : 'monthly',
-                    triggerFn   : function () {
-                        console.log("Now you have to pay salary to your team members.");
-                        _this.manager.money -= 100;
-                    }
-                });
-            }
-        }
+        // TODO make finding players
 
         fillPosition (player, position) {
             if (!this.players.length)
@@ -288,4 +245,3 @@ require(['js/playersDB.js'], function (players) {
     }
 
     Game.init();
-});
