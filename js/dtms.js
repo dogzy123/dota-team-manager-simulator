@@ -67,6 +67,16 @@ let teamId = 0, managerId = 0;
 let day = 1, week = 1, month = 1, year = 1;
 
 const Game = {
+    // tournaments template
+    tournaments     : {
+        level1 : [
+            {
+                name : "Dota Star League",
+                prize : 10000,
+                startDate : '1/5/3/1'
+            }
+        ]
+    },
 
     initialized     : false,
 
@@ -143,7 +153,7 @@ const Game = {
         {
             const DAY_INTERVAL = 2000;
 
-            const date = setInterval( () => {
+            const time = setInterval( () => {
                 if (this.events.length > 0)
                 {
                     let _this = this;
@@ -186,7 +196,7 @@ const Game = {
                 }
 
                 console.log("Day: " + day + ", Week: " + week + ", Month: " + month + ", Year: " + year);
-            }, DAY_INTERVAL);
+            }, DAY_INTERVAL );
 
             this.initialized = true;
         }
@@ -201,6 +211,7 @@ class TeamManager {
         this.nick    = name;
         this.teams   = [];
         this.money   = 1000;
+        this.level   = 1;
         this.id      = managerId;
 
         // monthly costs like food, clothes etc.
