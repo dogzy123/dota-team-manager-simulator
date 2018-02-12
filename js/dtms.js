@@ -38,8 +38,6 @@ let day = 1, week = 1, month = 1, year = 1;
 
 const Game = {
 
-    // TODO make function which will parse days to date (extra needed)
-
     initialized     : false,
 
     events          : [],
@@ -48,19 +46,17 @@ const Game = {
 
     daysToDate      : function ( days )
     {
-        let daysTotal = days + day;
+        let daysTotal = days + day; // 8
 
-        let newDays = daysTotal % 7; // 1 day
+        let newDays = daysTotal % 7 === 0 ? 7 : daysTotal % 7;
 
-        let weeksTotal = Math.round(daysTotal / 7) + week;
+        let weeksTotal = daysTotal % 7 === 0 ? Math.floor(daysTotal / 7) : Math.floor(daysTotal / 7) + week;
 
-        let newWeeks = weeksTotal % 4; // 3 weeks
+        let newWeeks = weeksTotal % 4 === 0 ? 4 : weeksTotal % 4;
 
-        newWeeks = newWeeks === 0 ? 1 : newWeeks;
+        let monthsTotal = weeksTotal % 4 === 0 ? Math.floor(weeksTotal / 4) : Math.floor(weeksTotal / 4) + month;
 
-        let monthsTotal = Math.floor(weeksTotal / 4) + month; // 13
-
-        let newMonth = monthsTotal % 12;
+        let newMonth = monthsTotal % 12 === 0 ? 12 : monthsTotal % 12;
 
         let yearsTotal = Math.round(monthsTotal / 12) + year;
 
@@ -159,7 +155,15 @@ const Game = {
 
             this.initialized = true;
 
-            console.log(Game.daysToDate(30));
+            console.log(Game.daysToDate(56));
+
+            Game.pushEvent({
+                eventId : "testat",
+                triggerDate : Game.daysToDate(7),
+                triggerFn : function () {
+                    console.log('Week passed, event finished.');
+                }
+            });
         }
     }
 };
