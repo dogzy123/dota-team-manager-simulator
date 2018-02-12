@@ -3,36 +3,66 @@ const playersDB = [
     {
         nick : "Dondo",
         mmr  : 4000,
-        pos  : [2],
+        positions : {
+            1 : 0,
+            2 : 100,
+            3 : 0,
+            4 : 0,
+            5 : 0
+        },
         teamExp : 0
     },
     {
         nick : "Sinner",
         mmr  : 4100,
-        pos  : [1, 2],
+        positions : {
+            1 : 0,
+            2 : 100,
+            3 : 0,
+            4 : 0,
+            5 : 0
+        },
         teamExp : 0
     },
     {
         nick : "Rtz",
         mmr  : 4500,
-        pos  : [1, 2],
+        positions : {
+            1 : 0,
+            2 : 100,
+            3 : 0,
+            4 : 0,
+            5 : 0
+        },
         teamExp : 0
     },
     {
         nick : "GG",
         mmr  : 5000,
-        post : [3],
+        positions : {
+            1 : 0,
+            2 : 100,
+            3 : 0,
+            4 : 0,
+            5 : 0
+        },
         teamExp : 0
     },
     {
         nick : "lox",
         mmr  : 2000,
-        post : [1],
+        positions : {
+            1 : 0,
+            2 : 100,
+            3 : 0,
+            4 : 0,
+            5 : 0
+        },
         teamExp : 0
     }
 ];
 
-let teamId = 0;
+let teamId = 0, managerId = 0;
 
 let day = 1, week = 1, month = 1, year = 1;
 
@@ -46,21 +76,25 @@ const Game = {
 
     daysToDate      : function ( days )
     {
-        let daysTotal = days + day; // 8
+        let daysTotal = days + day;
 
         let newDays = daysTotal % 7 === 0 ? 7 : daysTotal % 7;
 
-        let weeksTotal = daysTotal % 7 === 0 ? Math.floor(daysTotal / 7) : Math.floor(daysTotal / 7) + week;
+        daysTotal = newDays === 7 ? daysTotal - 7 : daysTotal;
+
+        let weeksTotal = daysTotal % 7 === 0 ? daysTotal / 7 + week : Math.floor(daysTotal / 7) + week;
 
         let newWeeks = weeksTotal % 4 === 0 ? 4 : weeksTotal % 4;
 
-        let monthsTotal = weeksTotal % 4 === 0 ? Math.floor(weeksTotal / 4) : Math.floor(weeksTotal / 4) + month;
+        weeksTotal = newWeeks === 4 ? weeksTotal - 4 : weeksTotal;
+
+        let monthsTotal = weeksTotal % 4 === 0 ? weeksTotal / 4 + month : Math.floor(weeksTotal / 4) + month;
 
         let newMonth = monthsTotal % 12 === 0 ? 12 : monthsTotal % 12;
 
-        let yearsTotal = Math.round(monthsTotal / 12) + year;
+        monthsTotal = newMonth === 12 ? monthsTotal - 12 : monthsTotal;
 
-        let newYear = yearsTotal % 12;
+        let newYear = monthsTotal % 12 === 0 ? monthsTotal / 12 : Math.floor(monthsTotal / 12) + year;
 
         return newDays + '/' + newWeeks + '/' + newMonth + '/' + newYear;
     },
@@ -73,6 +107,7 @@ const Game = {
     pushEvent       : function ( obj )
     {
         const _this = this;
+
         let uniqueId = true;
 
         if (this.events.length > 0 )
@@ -154,16 +189,6 @@ const Game = {
             }, DAY_INTERVAL);
 
             this.initialized = true;
-
-            console.log(Game.daysToDate(56));
-
-            Game.pushEvent({
-                eventId : "testat",
-                triggerDate : Game.daysToDate(7),
-                triggerFn : function () {
-                    console.log('Week passed, event finished.');
-                }
-            });
         }
     }
 };
@@ -176,6 +201,7 @@ class TeamManager {
         this.nick    = name;
         this.teams   = [];
         this.money   = 1000;
+        this.id      = managerId;
 
         // monthly costs like food, clothes etc.
         Game.pushEvent({
@@ -185,6 +211,19 @@ class TeamManager {
                 _this.money = _this.money - 150;
             }
         });
+
+        Game.pushEvent({
+            eventId : 'DTMS-EVENT-NEWMANAGER#' + managerId,
+            triggerDate : Game.daysToDate(3),
+            triggerFn : function () {
+                Game.createNotification({
+                    title : 'News',
+                    msg : `New manager called ${_this.nick} appeared in professional Dota scene. We wish him good luck in in startup!`
+                });
+            }
+        });
+
+        managerId++;
     }
 
     createTeam (teamTitle) {
@@ -203,8 +242,9 @@ class TeamManager {
 class Team {
 
     constructor (title, managerData) {
-        let _this       = this;
-        this.id         = teamId++;
+        const _this       = this;
+
+        this.id         = teamId;
         this.title      = title;
         this.manager    = managerData;
         this.players    = [];
@@ -221,10 +261,13 @@ class Team {
         {
             this.title =  this.manager.nick + "\'s team";
         }
+
+        teamId++;
     }
 
     findPlayer (days) {
-        let _this = this;
+        const _this = this;
+
         let playersFound = [];
 
         if (days <= 3)
