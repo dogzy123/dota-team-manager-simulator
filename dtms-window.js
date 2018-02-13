@@ -1,14 +1,18 @@
 // electron
-const electron  = require('electron');
-const app       = electron.app;
-const path      = require('path');
-const url       = require('url');
-const BrowserWindow = electron.BrowserWindow;
+const {BrowserWindow} = require('electron');
+const {app} = require('electron');
 
 let mainWindow;
 
 app.on('ready', function () {
-    mainWindow = new BrowserWindow({fullscreen : true, resizable : false});
+    mainWindow = new BrowserWindow({fullscreen : true, resizable : false, backgroundColor : "#3b4a63"});
+
+    mainWindow.webContents.on('did-finish-load', ()=>{
+        mainWindow.show();
+        mainWindow.focus();
+    });
 
     mainWindow.loadURL('file:///' + __dirname + "/index.html");
+
+    mainWindow.setMenu(null);
 });
