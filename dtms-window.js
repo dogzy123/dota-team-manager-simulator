@@ -5,7 +5,7 @@ const {app} = require('electron');
 let mainWindow;
 
 app.on('ready', function () {
-    mainWindow = new BrowserWindow({fullscreen : true, resizable : false, backgroundColor : "#3b4a63"});
+    mainWindow = new BrowserWindow({fullscreen : true, resizable : false});
 
     mainWindow.webContents.on('did-finish-load', ()=>{
         mainWindow.show();
@@ -14,5 +14,5 @@ app.on('ready', function () {
 
     mainWindow.loadURL('file:///' + __dirname + "/index.html");
 
-    mainWindow.setMenu(null);
+    //mainWindow.setMenu(null);
 });

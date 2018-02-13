@@ -1,24 +1,47 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css?family=Quicksand:400,500,700" rel="stylesheet">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
     <style>
         body {
             font-family: 'Quicksand', sans-serif;
             color: azure;
+            background-color: #3b4a63;
         }
 
         #date {
-            text-align: right;
+            text-align: left;
             font-size: 18px;
             font-weight: 500;
         }
+
+        #date-text {
+            border-bottom: 1px solid azure;
+        }
     </style>
-    <meta charset="UTF-8">
     <title>Dota Team Manager Simulator</title>
 </head>
 <body>
-    <div id="date">Day 1 Week 1 Month 1 Year 1</div>
-<script data-main="js/dtms" src="js/libs/require.js"></script>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-4">
+                <div id="date">
+                    <span id="date-text">Day 1 Week 1 Month 1 Year 1</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div id="money">
+                    <span id="money-text">1000$</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script data-main="js/config" src="js/libs/require.js"></script>
 </body>
 </html>

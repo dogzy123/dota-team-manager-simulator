@@ -135,7 +135,7 @@
                     }
 
 
-                    document.getElementById('date').innerText = `Day ${day} Week ${week} Month ${month} Year ${year}`;
+                    document.getElementById('date-text').innerText = `Day ${day} Week ${week} Month ${month} Year ${year}`;
 
                     console.log("Day: " + day + ", Week: " + week + ", Month: " + month + ", Year: " + year);
                 }, DAY_INTERVAL );
