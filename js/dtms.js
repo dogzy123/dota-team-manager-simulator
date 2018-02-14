@@ -148,7 +148,7 @@ const Game = {
 class TeamManager {
 
     constructor (name = "Player") {
-        const _this = this;
+        const _this  = this;
 
         this.nick    = name;
         this.teams   = [];
@@ -162,6 +162,7 @@ class TeamManager {
             triggerDate : "monthly",
             triggerFn : function () {
                 _this.money = _this.money - 150;
+                document.getElementById('money-text').innerHTML = _this.money + "$";
             }
         });
 
@@ -195,7 +196,7 @@ class TeamManager {
 class Team {
 
     constructor (title, managerData) {
-        const _this       = this;
+        const _this     = this;
 
         this.id         = teamId;
         this.title      = title;
@@ -243,3 +244,5 @@ class Team {
     };
 
 }
+
+Game.init();

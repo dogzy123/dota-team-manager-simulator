@@ -9,6 +9,7 @@
             font-family: 'Quicksand', sans-serif;
             color: azure;
             background-color: #3b4a63;
+            transition: background-color 0.15s ease-in;
         }
 
         #date {
@@ -23,23 +24,42 @@
             font-size: 18px;
             font-weight: 500;
         }
+
+        #menu {
+            width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 100px;
+        }
     </style>
     <title>Dota Team Manager Simulator</title>
 </head>
 <body>
-
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-4">
-                <div id="date">
-                    <span id="date-text" class="text">Day 1 Week 1 Month 1 Year 1</span>
+        <div id="game" style="display:none;">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div id="date">
+                        <span id="date-text" class="text">Day 1 Week 1 Month 1 Year 1</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">
+                    <div id="money">
+                        <span id="money-text" class="text">1000$</span>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-4">
-                <div id="money">
-                    <span id="money-text" class="text">1000$</span>
+
+        <div id="menu">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <button type="button" id="new-game" class="btn btn-secondary btn-lg btn-block">New Game</button>
+                        <button type="button" id="exit" class="btn btn-secondary btn-lg btn-block">Exit</button>
+                    </div>
                 </div>
             </div>
         </div>
