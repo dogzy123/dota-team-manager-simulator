@@ -2,17 +2,9 @@ const newGame = $('#new-game');
 const exit = $('#exit');
 const win = require('electron').remote.getCurrentWindow();
 
-const bodyBgColor = document.body.style.backgroundColor;
-const bodyColor = document.body.style.color;
-
-
 
 const loadGame = () => {
     // callback for loading game
-
-    document.body.style.backgroundColor = bodyBgColor;
-    document.body.style.color = bodyColor;
-    $('#game').show();
     require('../js/dtms.js');
 };
 

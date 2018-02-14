@@ -31,6 +31,17 @@
             margin-right: auto;
             margin-top: 100px;
         }
+
+        #create-form {
+            background-color: #1d1e1f;
+            border: 1px solid azure;
+            margin-left: auto;
+            margin-right: auto;
+            color : azure;
+            height: 210px;
+            width: 600px;
+            transition: opacity 0.15s ease-in;
+        }
     </style>
     <title>Dota Team Manager Simulator</title>
 </head>
@@ -52,13 +63,33 @@
                 </div>
             </div>
         </div>
-
         <div id="menu">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-12">
                         <button type="button" id="new-game" class="btn btn-secondary btn-lg btn-block">New Game</button>
                         <button type="button" id="exit" class="btn btn-secondary btn-lg btn-block">Exit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="create-form" style="display: none; opacity: 0;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-12" style="text-align: center">
+                        <h2>Character</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form class="form-inline" style="text-align: center">
+                            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                <div class="input-group-addon">Name</div>
+                                <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="Player">
+                            </div>
+
+                            <button type="button" id="create-character" class="btn btn-secondary btn-lg">OK</button>
+                        </form>
                     </div>
                 </div>
             </div>

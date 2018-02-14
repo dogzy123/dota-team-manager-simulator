@@ -1,9 +1,15 @@
 // players database temporary deleted
 //const PLAYERS_DB = players.players;  //array of players
 
+const characterDialog = $('#create-form');
+const characterButton = $('#create-character');
+const game            = $('#game');
+
 let teamId = 0, managerId = 0;
 
 let day = 1, week = 1, month = 1, year = 1;
+
+let mainCharacter;
 
 const Game = {
     // tournaments template
@@ -245,4 +251,19 @@ class Team {
 
 }
 
-Game.init();
+characterDialog.show();
+
+characterDialog.css('opacity', "1");
+
+characterButton.on('click', function () {
+    mainCharacter = new TeamManager(this.value);
+
+    characterDialog.hide();
+
+    document.body.style.backgroundColor = "#3b4a63";
+    document.body.style.color = "azure";
+
+    game.show();
+
+    Game.init();
+});
