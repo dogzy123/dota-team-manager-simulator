@@ -33,6 +33,7 @@
         }
 
         #create-form {
+            margin-top: 100px;
             background-color: #1d1e1f;
             border: 1px solid azure;
             margin-left: auto;
@@ -49,14 +50,14 @@
     <div class="container-fluid">
         <div id="game" style="display:none;">
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <div id="date">
                         <span id="date-text" class="text">Day 1 Week 1 Month 1 Year 1</span>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-sm-4">
+                <div class="col-sm-6">
                     <div id="money">
                         <span id="money-text" class="text">1000$</span>
                     </div>
@@ -80,18 +81,17 @@
                         <h2>Character</h2>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <form class="form-inline" style="text-align: center">
-                            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
-                                <div class="input-group-addon">Name</div>
-                                <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="Player">
-                            </div>
-
-                            <button type="button" id="create-character" class="btn btn-secondary btn-lg">OK</button>
-                        </form>
+                <form class="form-group row" style="margin-top : 30px; text-align: center">
+                    <div class="col-sm-9">
+                        <div class="input-group" style="height: 100%">
+                            <div class="input-group-addon">Name</div>
+                            <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="Player">
+                        </div>
                     </div>
-                </div>
+                    <div class="col-sm-3">
+                        <button type="button" id="create-character" class="btn btn-secondary btn-lg">OK</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
