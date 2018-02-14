@@ -4,6 +4,7 @@
 const characterDialog = $('#create-form');
 const characterButton = $('#create-character');
 const game            = $('#game');
+const menu            = $('#menu');
 
 let teamId = 0, managerId = 0;
 
@@ -13,6 +14,8 @@ let mainCharacter;
 
 const Game = {
     // tournaments template
+    paused          : false,
+
     tournaments     : {
         level1 : [
             {
@@ -99,52 +102,86 @@ const Game = {
             const DAY_INTERVAL = 2000;
 
             const time = setInterval( () => {
-                if (this.events.length > 0)
+                if (!Game.paused)
                 {
-                    let _this = this;
+                    if (this.events.length > 0)
+                    {
+                        let _this = this;
 
-                    this.events.forEach(function (event) {
-                        if (event.triggerDate === _this.getDate())
-                        {
-                            event.triggerFn();
-                            _this.events = _this.events.filter( (e) => e.eventId !== event.eventId );
-                        }
-
-                        if (event.triggerDate === "monthly")
-                        {
-                            if (day === 7 && week === 4)
+                        this.events.forEach(function (event) {
+                            if (event.triggerDate === _this.getDate())
                             {
                                 event.triggerFn();
+                                _this.events = _this.events.filter( (e) => e.eventId !== event.eventId );
                             }
-                        }
-                    });
+
+                            if (event.triggerDate === "monthly")
+                            {
+                                if (day === 7 && week === 4)
+                                {
+                                    event.triggerFn();
+                                }
+                            }
+                        });
+                    }
+
+                    day = day + 1;
+
+                    if (day > 7 )
+                    {
+                        week = week + 1;
+                        day = 1;
+                    }
+
+                    if (week > 4)
+                    {
+                        month = month + 1;
+                        week = 1;
+                    }
+
+                    if (month > 12)
+                    {
+                        year = year + 1;
+                        month = 1;
+                    }
+
+
+                    document.getElementById('date-text').innerText = `Day ${day} Week ${week} Month ${month} Year ${year}`;
+
+                    console.log("Day: " + day + ", Week: " + week + ", Month: " + month + ", Year: " + year);
                 }
-
-                day = day + 1;
-
-                if (day > 7 )
-                {
-                    week = week + 1;
-                    day = 1;
-                }
-
-                if (week > 4)
-                {
-                    month = month + 1;
-                    week = 1;
-                }
-
-                if (month > 12)
-                {
-                    year = year + 1;
-                    month = 1;
-                }
-
-
-                document.getElementById('date-text').innerText = `Day ${day} Week ${week} Month ${month} Year ${year}`;
-
-                console.log("Day: " + day + ", Week: " + week + ", Month: " + month + ", Year: " + year);
             }, DAY_INTERVAL );
+
+            const togglePause = () => {
+                Game.paused = !Game.paused;
+
+                if (game.css('display') === "none")
+                {
+                    game.show();
+                }
+                else
+                {
+                    game.hide();
+                }
+
+                if (menu.css('display') === "none")
+                {
+                    menu.show();
+                }
+                else
+                {
+                    menu.hide();
+                }
+            };
+
+            document.body.addEventListener('keydown', function (e) {
+                e.preventDefault();
+
+                if(e.keyCode === 27)
+                {
+                    togglePause();
+                }
+            });
 
             this.initialized = true;
         }
