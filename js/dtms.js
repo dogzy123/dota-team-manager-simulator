@@ -1,10 +1,12 @@
 // players database temporary deleted
 //const PLAYERS_DB = players.players;  //array of players
 
+// HTML CONSTANTS
 const characterDialog = $('#create-form');
 const characterButton = $('#create-character');
 const game            = $('#game');
 const menu            = $('#menu');
+const continueBtn     = $('#continue');
 
 let teamId = 0, managerId = 0;
 
@@ -183,6 +185,14 @@ const Game = {
                 }
             });
 
+            continueBtn.show();
+
+            continueBtn.on('click', () => {
+                Game.paused = !Game.paused;
+                menu.hide();
+                game.show();
+            });
+
             this.initialized = true;
         }
     }
@@ -295,11 +305,10 @@ characterDialog.css('opacity', "1");
 characterButton.on('click', function () {
     mainCharacter = new TeamManager(this.value);
 
-    characterDialog.hide();
-
     document.body.style.backgroundColor = "#3b4a63";
     document.body.style.color = "azure";
 
+    characterDialog.hide();
     game.show();
 
     Game.init();

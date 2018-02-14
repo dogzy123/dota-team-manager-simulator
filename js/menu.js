@@ -2,7 +2,6 @@ const newGame = $('#new-game');
 const exit = $('#exit');
 const win = require('electron').remote.getCurrentWindow();
 
-
 const loadGame = () => {
     // callback for loading game
     require('../js/dtms.js');
