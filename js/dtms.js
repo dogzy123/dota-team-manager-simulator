@@ -10,11 +10,15 @@ const game            = $('#game');
 const menu            = $('#menu');
 const continueBtn     = $('#continue');
 
-let teamId = 0, managerId = 0;
+let teamId, managerId;
 
-let day = 1, week = 1, month = 1, year = 1;
+let day, week, month, year;
+
+let time;
 
 let mainCharacter;
+
+let escMenu;
 
 const Game = {
     // tournaments template
@@ -105,7 +109,34 @@ const Game = {
         {
             const DAY_INTERVAL = 2000;
 
-            const time = setInterval( () => {
+            const togglePause = () => {
+                Game.paused = !Game.paused;
+
+                if (game.css('display') === "none")
+                {
+                    game.show();
+                }
+                else
+                {
+                    game.hide();
+                }
+
+                if (menu.css('display') === "none")
+                {
+                    menu.show();
+                    $('#new-game').on('click', function () {
+                        gameStarting();
+                    })
+                }
+                else
+                {
+                    menu.hide();
+                }
+            };
+
+            Game.paused = false;
+
+            time = setInterval( () => {
                 if (!Game.paused)
                 {
                     if (this.events.length > 0)
@@ -156,36 +187,14 @@ const Game = {
                 }
             }, DAY_INTERVAL );
 
-            const togglePause = () => {
-                Game.paused = !Game.paused;
-
-                if (game.css('display') === "none")
-                {
-                    game.show();
-                }
-                else
-                {
-                    game.hide();
-                }
-
-                if (menu.css('display') === "none")
-                {
-                    menu.show();
-                }
-                else
-                {
-                    menu.hide();
-                }
-            };
-
-            document.body.addEventListener('keydown', function (e) {
-                e.preventDefault();
-
+            escMenu = (e) => {
                 if(e.keyCode === 27)
                 {
                     togglePause();
                 }
-            });
+            };
+
+            document.body.addEventListener('keydown', escMenu);
 
             continueBtn.show();
 
@@ -199,8 +208,6 @@ const Game = {
             {
                 moneyText.text(mainCharacter.money + '$');
             }
-
-            console.log(mainCharacter);
 
             this.initialized = true;
         }
@@ -307,29 +314,54 @@ class Team {
 
 }
 
-characterDialog.show();
+const reInitialize = () => {
+    if (time) clearInterval(time);
 
-characterDialog.css('opacity', "1");
+    teamId = 0;
+    managerId = 0;
+    day = 1;
+    week = 1;
+    month = 1;
+    year = 1;
+    document.getElementById('date-text').innerText = `Day ${day} Week ${week} Month ${month} Year ${year}`;
+    Game.initialized = false;
+    Game.events = [];
+    Game.notifications = [];
 
-characterButton.on('click', function () {
-    if (characterInput.val())
-    {
-        characterInput.removeClass('form-control-danger');
-        characterInput.parent().removeClass('has-danger');
+    document.body.removeEventListener('keydown', escMenu);
 
-        mainCharacter = new TeamManager(characterInput.val());
+    moneyText.text("");
+};
 
-        document.body.style.backgroundColor = "#3b4a63";
-        document.body.style.color = "azure";
+const gameStarting = () => {
+    reInitialize();
 
-        characterDialog.hide();
-        game.show();
+    characterDialog.show();
 
-        Game.init();
-    }
-    else
-    {
-        characterInput.addClass('form-control-danger');
-        characterInput.parent().addClass('has-danger');
-    }
-});
+    characterDialog.css('opacity', "1");
+
+    characterButton.on('click', function () {
+        if (characterInput.val())
+        {
+            characterInput.removeClass('form-control-danger');
+            characterInput.parent().removeClass('has-danger');
+
+            mainCharacter = new TeamManager(characterInput.val());
+
+            document.body.style.backgroundColor = "#3b4a63";
+            document.body.style.color = "azure";
+
+            characterDialog.hide();
+            game.show();
+
+            Game.init();
+        }
+        else
+        {
+            characterInput.addClass('form-control-danger');
+            characterInput.parent().addClass('has-danger');
+        }
+    });
+};
+
+gameStarting();
