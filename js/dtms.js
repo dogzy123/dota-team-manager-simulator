@@ -4,6 +4,8 @@
 // HTML CONSTANTS
 const characterDialog = $('#create-form');
 const characterButton = $('#create-character');
+const characterInput  = $('#inlineFormInputGroup');
+const moneyText       = $('#money-text');
 const game            = $('#game');
 const menu            = $('#menu');
 const continueBtn     = $('#continue');
@@ -70,7 +72,7 @@ const Game = {
 
         let uniqueId = true;
 
-        if (this.events.length > 0 )
+        if (this.events.length > 0)
         {
             this.events.forEach(function (e) {
                 if ( e.eventId === obj.eventId )
@@ -193,6 +195,13 @@ const Game = {
                 game.show();
             });
 
+            if (mainCharacter)
+            {
+                moneyText.text(mainCharacter.money + '$');
+            }
+
+            console.log(mainCharacter);
+
             this.initialized = true;
         }
     }
@@ -215,7 +224,7 @@ class TeamManager {
             triggerDate : "monthly",
             triggerFn : function () {
                 _this.money = _this.money - 150;
-                document.getElementById('money-text').innerHTML = _this.money + "$";
+                moneyText.text(_this.money + "$");
             }
         });
 
@@ -303,13 +312,24 @@ characterDialog.show();
 characterDialog.css('opacity', "1");
 
 characterButton.on('click', function () {
-    mainCharacter = new TeamManager(this.value);
+    if (characterInput.val())
+    {
+        characterInput.removeClass('form-control-danger');
+        characterInput.parent().removeClass('has-danger');
 
-    document.body.style.backgroundColor = "#3b4a63";
-    document.body.style.color = "azure";
+        mainCharacter = new TeamManager(characterInput.val());
 
-    characterDialog.hide();
-    game.show();
+        document.body.style.backgroundColor = "#3b4a63";
+        document.body.style.color = "azure";
 
-    Game.init();
+        characterDialog.hide();
+        game.show();
+
+        Game.init();
+    }
+    else
+    {
+        characterInput.addClass('form-control-danger');
+        characterInput.parent().addClass('has-danger');
+    }
 });
