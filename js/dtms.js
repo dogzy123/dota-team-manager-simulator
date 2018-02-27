@@ -1,6 +1,8 @@
 // players database temporary deleted
 //const PLAYERS_DB = players.players;  //array of players
 
+let decisions = require('./decisions.js');
+
 // HTML CONSTANTS
 const characterDialog = $('#create-form');
 const characterButton = $('#create-character');
@@ -103,6 +105,10 @@ const Game = {
         this.notifications.push(alert(obj.msg));
     },
 
+    over            : function () {
+        reInitialize();
+    },
+
     init            : function ()
     {
         if (!this.initialized)
@@ -156,6 +162,10 @@ const Game = {
                                 {
                                     event.triggerFn();
                                 }
+                            }
+                            if (event.triggerDate === "daily")
+                            {
+                                event.triggerFn();
                             }
                         });
                     }
@@ -230,8 +240,7 @@ class TeamManager {
             eventId : 'DTMS-EVENT-MONTHLY-COSTS',
             triggerDate : "monthly",
             triggerFn : function () {
-                _this.money = _this.money - 150;
-                moneyText.text(_this.money + "$");
+                _this.changeMoney(-150);
             }
         });
 
@@ -241,10 +250,13 @@ class TeamManager {
             triggerFn : function () {
                 Game.createNotification({
                     title : 'News',
-                    msg : `New manager called ${_this.nick} appeared in professional Dota scene. We wish him good luck in in startup!`
+                    msg : `New manager called ${_this.nick} appeared in professional Dota scene. We wish him good luck in startup!`
                 });
             }
         });
+        for (let event of decisions.inst.makeEvents(_this, Game)) {
+            Game.pushEvent(event);
+        }
 
         managerId++;
     }
@@ -259,6 +271,11 @@ class TeamManager {
 
     getTeams () {
         return this.teams;
+    }
+
+    changeMoney (amount) {
+        this.money = this.money + amount;
+        moneyText.text(this.money + "$");
     }
 }
 
