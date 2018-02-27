@@ -1,4 +1,6 @@
 
+let battle = require('./battle.js');
+
 /**
  * I'll put here some logic describing random events I came up with
  */
@@ -28,6 +30,20 @@ let Decisions = function()
                             title : 'News',
                             msg : 'You spent whole day studying, what a looser!',
                         });
+                    }
+                }
+            },
+            {
+                eventId : Math.random(),
+                triggerDate : game.daysToDate(9),
+                triggerFn : function () {
+                    if (flags.cameToLanParty) {
+                        let giveItATry = confirm('Surfing through custom maps your glance stops at a title "Defence of the Ancients". Do you want to give it a try?');
+                        if (giveItATry) {
+                            battle.start(player, game);
+                        } else {
+                            showMsg('Sure, the title does not sound even close to cool maps like Angel Arena or AOS, it probably won\'t ever get popular.');
+                        }
                     }
                 }
             },
@@ -64,6 +80,8 @@ let Decisions = function()
                     flags.attemptedToTakeTheJob = confirm('Your labor of love does not give you enough profit just yet, but you realize that you have to pay for living. You see a "Help Wanted" sign on a Pakistan Kebab, do you take the job?');
                     if (flags.attemptedToTakeTheJob) {
                         showMsg('You came to an interview, but sadly it appears that you need to know the native language for this job. You decided to start learning it.');
+                    } else {
+                        showMsg('Right, let\'s wait for a better opportunity or spend time improving your team!');
                     }
                 }
             },
@@ -86,7 +104,7 @@ let Decisions = function()
                     if (flags.tookTheJob) {
                         let delayed = Math.random() < 0.2;
                         if (!delayed) {
-                            showMsg('Here is yor salary, guys!');
+                            showMsg('Here is your salary, guys!');
                             player.changeMoney(75);
                         } else {
                             showMsg('Your employer is short on funds this month, so your salary gets "delayed".');
