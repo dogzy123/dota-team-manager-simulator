@@ -273,7 +273,7 @@ class TeamManager {
     }
 
     changeMoney (amount, description) {
-        let textClass = amount > 0 ? "text-successful" : "text-danger";
+        let textClass = amount > 0 ? "text-success" : "text-danger";
 
         this.money = this.money + amount;
 
