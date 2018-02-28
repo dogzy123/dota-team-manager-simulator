@@ -3,9 +3,7 @@ const newGame = $('#new-game');
 const exit = $('#exit');
 
 // CURRENT WINDOW
-const win = require('electron').remote.getCurrentWindow();
-
-const props = require('electron').remote;
+const electron = require('electron').remote;
 
 const loadGame = () => {
     // callback for loading game
@@ -22,5 +20,5 @@ newGame.on('click', () => {
 });
 
 exit.on('click', () => {
-    win.close();
+    electron.getCurrentWindow().close();
 });

@@ -8,19 +8,17 @@ const characterDialog = $('#create-form');
 const characterButton = $('#create-character');
 const characterInput  = $('#inlineFormInputGroup');
 const moneyText       = $('#money-text');
+const costsText       = $('#costs-text');
+const costsDescr      = $('#costs-description');
 const game            = $('#game');
 const menu            = $('#menu');
 const continueBtn     = $('#continue');
 
-let teamId, managerId;
-
-let day, week, month, year;
-
-let time;
-
+let teamId, managerId;          // unique ids
+let day, week, month, year;     // date
+let time;                       // date function
 let mainCharacter;
-
-let escMenu;
+let escMenu;                    // pause/menu toggle
 
 const Game = {
     // tournaments template
@@ -144,7 +142,7 @@ const Game = {
 
             time = setInterval( () => {
                 if (!Game.paused)
-                {
+                    {
                     if (this.events.length > 0)
                     {
                         let _this = this;
@@ -163,6 +161,7 @@ const Game = {
                                     event.triggerFn();
                                 }
                             }
+
                             if (event.triggerDate === "daily")
                             {
                                 event.triggerFn();
@@ -240,7 +239,7 @@ class TeamManager {
             eventId : 'DTMS-EVENT-MONTHLY-COSTS',
             triggerDate : "monthly",
             triggerFn : function () {
-                _this.changeMoney(-150);
+                _this.changeMoney(-150, "Monthly costs");
             }
         });
 
@@ -273,9 +272,26 @@ class TeamManager {
         return this.teams;
     }
 
-    changeMoney (amount) {
+    changeMoney (amount, description) {
+        let textClass = amount > 0 ? "text-successful" : "text-danger";
+
         this.money = this.money + amount;
+
         moneyText.text(this.money + "$");
+        costsText.text(amount);
+
+        if (description)
+        {
+            costsDescr.text(description);
+        }
+
+        costsText.addClass(textClass + " costs-reveal");
+        costsDescr.addClass(textClass + " costs-reveal");
+
+        setTimeout( () => {
+            costsText.removeClass("costs-reveal");
+            costsDescr.removeClass("costs-reveal");
+        }, 1500);
     }
 }
 
@@ -365,7 +381,7 @@ const gameStarting = () => {
 
             mainCharacter = new TeamManager(characterInput.val());
 
-            document.body.style.backgroundColor = "#3b4a63";
+            document.body.style.backgroundColor = "#19273c";
             document.body.style.color = "azure";
 
             characterDialog.hide();
