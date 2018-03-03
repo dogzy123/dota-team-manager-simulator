@@ -2,6 +2,7 @@
 //const PLAYERS_DB = players.players;  //array of players
 
 let decisions = require('./decisions.js');
+const Notifications = require('./notifications');
 
 // HTML CONSTANTS
 const characterDialog = $('#create-form');
@@ -98,9 +99,19 @@ const Game = {
 
     createNotification : function ( obj )
     {
-        // further there will be created modal
-        // for each notification object
-        this.notifications.push(alert(obj.msg));
+        let message = Notifications.Notifications.create({
+                title     : obj.title,
+                msg       : obj.msg,
+                onConfirm : function () {
+                    Game.paused = false;
+                }
+        });
+
+        $('#notifications').append(message);
+
+        Game.paused = true;
+
+        this.notifications.push(message);
     },
 
     over            : function () {
