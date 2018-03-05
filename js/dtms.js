@@ -99,13 +99,29 @@ const Game = {
 
     createNotification : function ( obj )
     {
-        let message = Notifications.Notifications.create({
+        // need to create notification queue, otherwise there will be many bugs with game pausing
+        let message;
+
+        message = Notifications.Notifications.create({
+            title     : obj.title,
+            msg       : obj.msg,
+            onConfirm : function () {
+                obj.onConfirm();
+                Game.paused = false;
+            }
+        });
+
+        if (obj.buttons)
+        {
+            message = Notifications.Notifications.create({
                 title     : obj.title,
                 msg       : obj.msg,
-                onConfirm : function () {
+                buttons   : obj.buttons,
+                callback  : function () {
                     Game.paused = false;
                 }
-        });
+            });
+        }
 
         $('#notifications').append(message);
 
