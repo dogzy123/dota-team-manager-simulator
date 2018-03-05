@@ -106,7 +106,11 @@ const Game = {
             title     : obj.title,
             msg       : obj.msg,
             onConfirm : function () {
-                obj.onConfirm();
+                if (obj.onConfirm)
+                {
+                    obj.onConfirm();
+                }
+
                 Game.paused = false;
             }
         });
@@ -122,8 +126,6 @@ const Game = {
                 }
             });
         }
-
-        $('#notifications').append(message);
 
         Game.paused = true;
 
@@ -169,7 +171,7 @@ const Game = {
 
             time = setInterval( () => {
                 if (!Game.paused)
-                    {
+                {
                     if (this.events.length > 0)
                     {
                         let _this = this;
@@ -177,7 +179,16 @@ const Game = {
                         this.events.forEach(function (event) {
                             if (event.triggerDate === _this.getDate())
                             {
-                                event.triggerFn();
+                                if (event.triggerFn)
+                                {
+                                    event.triggerFn();
+                                }
+
+                                if (event.notification)
+                                {
+                                    Game.createNotification(event.notification);
+                                }
+
                                 _this.events = _this.events.filter( (e) => e.eventId !== event.eventId );
                             }
 
@@ -185,13 +196,52 @@ const Game = {
                             {
                                 if (day === 7 && week === 4)
                                 {
-                                    event.triggerFn();
+                                    if (event.triggerFn)
+                                    {
+                                        event.triggerFn();
+                                    }
+
+                                    if (event.notification)
+                                    {
+                                        Game.createNotification(event.notification);
+                                    }
                                 }
                             }
 
                             if (event.triggerDate === "daily")
                             {
-                                event.triggerFn();
+                                if (event.triggerFn)
+                                {
+                                    event.triggerFn();
+                                }
+
+                                if (event.notification)
+                                {
+                                    Game.createNotification(event.notification);
+                                }
+                            }
+                        });
+                    }
+
+                    if (this.notifications.length > 0)
+                    {
+                        const _this = this;
+
+                        let current = '', next = true;
+
+                        this.notifications.forEach(function (notification) {
+                            if (next)
+                            {
+                                current = notification;
+
+                                $('#notifications').append(current);
+
+                                next = false;
+
+                                if (_this.notifications.indexOf(current) > -1)
+                                {
+                                   _this.notifications.splice(_this.notifications.indexOf(current), 1);
+                                }
                             }
                         });
                     }
@@ -216,10 +266,7 @@ const Game = {
                         month = 1;
                     }
 
-
                     document.getElementById('date-text').innerText = `Day ${day} Week ${week} Month ${month} Year ${year}`;
-
-                    console.log("Day: " + day + ", Week: " + week + ", Month: " + month + ", Year: " + year);
                 }
             }, DAY_INTERVAL );
 
@@ -273,13 +320,12 @@ class TeamManager {
         Game.pushEvent({
             eventId : 'DTMS-EVENT-NEWMANAGER#' + managerId,
             triggerDate : Game.daysToDate(3),
-            triggerFn : function () {
-                Game.createNotification({
-                    title : 'News',
-                    msg : `New manager called ${_this.nick} appeared in professional Dota scene. We wish him good luck in startup!`
-                });
+            notification : {
+                title : 'News',
+                msg : `New manager called ${_this.nick} appeared in professional Dota scene. We wish him good luck in startup!`
             }
         });
+
         for (let event of decisions.inst.makeEvents(_this, Game)) {
             Game.pushEvent(event);
         }
