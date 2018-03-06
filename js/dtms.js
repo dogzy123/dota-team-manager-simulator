@@ -99,7 +99,6 @@ const Game = {
 
     createNotification : function ( obj )
     {
-        // need to create notification queue, otherwise there will be many bugs with game pausing
         let message;
 
         message = Notifications.Notifications.create({
@@ -115,6 +114,10 @@ const Game = {
             }
         });
 
+        message.init = function () {
+            Game.paused = true;
+        };
+
         if (obj.buttons)
         {
             message = Notifications.Notifications.create({
@@ -126,8 +129,6 @@ const Game = {
                 }
             });
         }
-
-        Game.paused = true;
 
         this.notifications.push(message);
     },
@@ -235,6 +236,8 @@ const Game = {
                                 current = notification;
 
                                 $('#notifications').append(current);
+
+                                current.init();
 
                                 next = false;
 

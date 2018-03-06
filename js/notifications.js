@@ -106,6 +106,14 @@ const _create = (params) => {
         );
 };
 
+const _init = (fn) => {
+    if (fn && typeof fn === 'function')
+    {
+        fn();
+    }
+};
+
 exports.Notifications = {
-    create : _create
+    create : _create,
+    init   : _init
 };
