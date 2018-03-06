@@ -227,6 +227,7 @@ const Game = {
                     if (this.notifications.length > 0)
                     {
                         const _this = this;
+                        const backdrop = $('#backdrop');
 
                         let current = '', next = true;
 
@@ -236,6 +237,7 @@ const Game = {
                                 current = notification;
 
                                 $('#notifications').append(current);
+                                backdrop.addClass('modal-backdrop');
 
                                 current.init();
 
@@ -349,9 +351,18 @@ class TeamManager {
     }
 
     changeMoney (amount, description) {
-        let textClass = amount > 0 ? "text-success" : "text-danger";
-
+        let textClass = "";
         this.money = this.money + amount;
+
+        if (amount < 0)
+        {
+            textClass = "text-danger";
+        }
+        else
+        {
+            textClass = "text-success";
+            amount = "+" + amount;
+        }
 
         moneyText.text(this.money + "$");
         costsText.text(amount);

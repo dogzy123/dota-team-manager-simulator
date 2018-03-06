@@ -1,36 +1,4 @@
-/*
- I example :
--------------
- notification = {
-    title : 'News',
-    msg   : 'Some information here lorem ipsum',
-    onConfirm : function () {
-        .. do something
-    };
- };
-
- II example
-------------
- notification = {
-    title : 'News',
-    msg   : 'Some information here lorem ipsum',
-    buttons : [
-        {
-            name : 'Yes',
-            callback : function () {
-                ..do something
-            }
-        },
-        {
-            name : 'No',
-            callback : function () {
-               ..do something
-            }
-        }
-    ]
- };
-
-*/
+const backdrop = $('#backdrop');
 
 const _getBody = (body) => {
     return $('<div class="modal-body">').append(
@@ -42,7 +10,10 @@ const _getHeader = (header, template) => {
     return $('<div class="modal-header">').append(
         $('<h5>' + header + '</h5>'),
         $('<button type="button" class="close">').append(
-            $('<span>&times;</span>').on('click', () => template.remove())
+            $('<span>&times;</span>').on('click', () => {
+                template.remove();
+                backdrop.removeClass('modal-backdrop');
+            })
         )
     );
 };
@@ -52,7 +23,10 @@ const _create = (params) => {
     const mDialog   = $('<div class="modal-dialog">');
     const mContent  = $('<div class="modal-content">');
 
-    const confirmButton = $('<button type="button" class="btn btn-warning">OK</button>').on('click', () => template.remove());
+    const confirmButton = $('<button type="button" class="btn btn-warning">OK</button>').on('click', () => {
+        template.remove();
+        backdrop.removeClass('modal-backdrop');
+    });
 
     let mHeader, mBody, mFooter;
 

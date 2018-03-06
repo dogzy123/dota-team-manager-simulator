@@ -63,11 +63,20 @@
             width: 600px;
             transition: opacity 0.15s ease-in;
         }
+
+        #backdrop {
+            opacity: 0;
+            transition: opacity 0.11s ease-in;
+        }
+
+        .modal-backdrop {
+            opacity: 0.65 !important;
+        }
     </style>
     <title>Dota Team Manager Simulator</title>
 </head>
 <body>
-    <div class="container-fluid">
+    <div id="game-document" class="container-fluid">
         <div id="game" style="display:none;">
             <div class="row">
                 <div class="col-sm-6">
@@ -126,6 +135,7 @@
                 </form>
             </div>
         </div>
+        <div id="backdrop"></div>
     </div>
 
     <script data-main="js/config" src="js/libs/require.js"></script>
