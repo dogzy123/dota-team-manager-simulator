@@ -1,7 +1,7 @@
 // players database temporary deleted
 //const PLAYERS_DB = players.players;  //array of players
 
-let decisions = require('./decisions.js');
+const decisions = require('./decisions.js');
 const Notifications = require('./notifications');
 
 // HTML CONSTANTS
@@ -14,6 +14,7 @@ const costsDescr      = $('#costs-description');
 const game            = $('#game');
 const menu            = $('#menu');
 const continueBtn     = $('#continue');
+const createTeam      = $('#create-team');
 
 let teamId, managerId;          // unique ids
 let day, week, month, year;     // date
@@ -134,7 +135,11 @@ const Game = {
     },
 
     over            : function () {
-        reInitialize();
+        return reInitialize();
+    },
+
+    start           : function () {
+        return gameStarting();
     },
 
     init            : function ()
@@ -285,12 +290,13 @@ const Game = {
             document.body.addEventListener('keydown', escMenu);
 
             continueBtn.show();
-
             continueBtn.on('click', () => {
                 Game.paused = !Game.paused;
                 menu.hide();
                 game.show();
             });
+
+            createTeam.show();
 
             if (mainCharacter)
             {
@@ -457,8 +463,14 @@ const gameStarting = () => {
     reInitialize();
 
     characterDialog.show();
-
     characterDialog.css('opacity', "1");
+
+    characterInput.on('keydown', e => {
+        if (e.keyCode === 13)
+        {
+            characterButton.focus();
+        }
+    });
 
     characterButton.on('click', function () {
         if (characterInput.val())
@@ -484,4 +496,6 @@ const gameStarting = () => {
     });
 };
 
-gameStarting();
+module.exports = {
+    Game : Game
+};

@@ -69,6 +69,17 @@
             transition: opacity 0.11s ease-in;
         }
 
+        #create-team {
+            margin-top: 50px;
+        }
+
+        .btn-team {
+            padding: 50px 150px;
+            font-size: 36px;
+            text-transform: uppercase;
+            border: 3px solid;
+        }
+
         .modal-backdrop {
             opacity: 0.65 !important;
         }
@@ -78,27 +89,23 @@
 <body>
     <div id="game-document" class="container-fluid">
         <div id="game" style="display:none;">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div id="date">
-                        <span id="date-text" class="text">Day 1 Week 1 Month 1 Year 1</span>
-                    </div>
+            <div class="col-sm-6">
+                <div id="date">
+                    <span id="date-text" class="text">Day 1 Week 1 Month 1 Year 1</span>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-sm-3">
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <div id="money">
-                                <span id="money-text" class="text"></span>
-                            </div>
+            <div class="col-sm-3">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div id="money">
+                            <span id="money-text" class="text"></span>
                         </div>
-                        <div class="col-sm-3 col-costs">
-                            <span id="costs-text" class="text"></span>
-                        </div>
-                        <div class="col-sm-6">
-                            <span id="costs-description" class="text"></span>
-                        </div>
+                    </div>
+                    <div class="col-sm-3 col-costs">
+                        <span id="costs-text" class="text"></span>
+                    </div>
+                    <div class="col-sm-6">
+                        <span id="costs-description" class="text"></span>
                     </div>
                 </div>
             </div>
@@ -115,6 +122,11 @@
             </div>
         </div>
         <div id="notifications"></div>
+        <div id="create-team" style="display: none;">
+            <div class="col-sm-4">
+                <button type="button" class="btn btn-outline-warning btn-lg btn-block">Create team</button>
+            </div>
+        </div>
         <div id="create-form" style="display: none; opacity: 0;">
             <div class="container">
                 <div class="row">
@@ -136,8 +148,9 @@
             </div>
         </div>
         <div id="backdrop"></div>
-    </div>
 
-    <script data-main="js/config" src="js/libs/require.js"></script>
+        <script src="js/config.js"></script>
+        <script src="js/menu.js"></script>
+    </div>
 </body>
 </html>

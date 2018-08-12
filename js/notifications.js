@@ -70,14 +70,14 @@ const _create = (params) => {
     }
 
     return template.append(
-            mDialog.append(
-                mContent.append(
-                    mHeader,
-                    mBody,
-                    mFooter
-                )
+        mDialog.append(
+            mContent.append(
+                mHeader,
+                mBody,
+                mFooter
             )
-        );
+        )
+    );
 };
 
 const _init = (fn) => {

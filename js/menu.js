@@ -1,24 +1,19 @@
-// HTML CONSTANTS
-const newGame = $('#new-game');
-const exit = $('#exit');
-
 // CURRENT WINDOW
 const electron = require('electron').remote;
+const {Game} = require('./js/dtms');
 
-const loadGame = () => {
-    // callback for loading game
-    require('../js/dtms.js');
-};
+// HTML CONSTANTS
+const newGame   = $('#new-game');
+const exit      = $('#exit');
+const menu      = $("#menu");
 
 newGame.on('click', () => {
     document.body.style.backgroundColor = "#000";
     document.body.style.color = "#000";
 
-    $('#menu').hide();
+    menu.hide();
 
-    setTimeout(loadGame, 2000);
+    setTimeout( () => Game.start(), 2000);
 });
 
-exit.on('click', () => {
-    electron.getCurrentWindow().close();
-});
+exit.on('click', () => electron.getCurrentWindow().close() );
