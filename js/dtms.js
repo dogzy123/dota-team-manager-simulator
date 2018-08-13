@@ -9,6 +9,7 @@ const characterDialog = $('#create-form');
 const characterButton = $('#create-character');
 const characterInput  = $('#inlineFormInputGroup');
 const moneyText       = $('#money-text');
+const dateText        = document.getElementById("date-text");
 const costsText       = $('#costs-text');
 const costsDescr      = $('#costs-description');
 const game            = $('#game');
@@ -16,10 +17,10 @@ const menu            = $('#menu');
 const continueBtn     = $('#continue');
 const createTeam      = $('#create-team');
 
-let teamId, managerId;          // unique ids
+let teamId = 0, managerId = 0;  // unique ids
 let day, week, month, year;     // date
 let time;                       // date function
-let mainCharacter;
+let MAIN_CHARACTER;
 let escMenu;                    // pause/menu toggle
 
 const Game = {
@@ -74,8 +75,6 @@ const Game = {
 
     pushEvent       : function ( obj )
     {
-        const _this = this;
-
         let uniqueId = true;
 
         if (this.events.length > 0)
@@ -89,7 +88,7 @@ const Game = {
 
             if (uniqueId)
             {
-                _this.events.push(obj);
+                this.events.push(obj);
             }
         }
         else
@@ -102,7 +101,7 @@ const Game = {
     {
         let message;
 
-        message = Notifications.Notifications.create({
+        message = Notifications.create({
             title     : obj.title,
             msg       : obj.msg,
             onConfirm : function () {
@@ -148,6 +147,8 @@ const Game = {
         {
             const DAY_INTERVAL = 2000;
 
+            Game.paused = false;
+
             const togglePause = () => {
                 Game.paused = !Game.paused;
 
@@ -173,17 +174,15 @@ const Game = {
                 }
             };
 
-            Game.paused = false;
-
             time = setInterval( () => {
+                dateText.innerHTML = `Day ${day} Week ${week} Month ${month} Year ${year}`;
+
                 if (!Game.paused)
                 {
                     if (this.events.length > 0)
                     {
-                        let _this = this;
-
-                        this.events.forEach(function (event) {
-                            if (event.triggerDate === _this.getDate())
+                        this.events.forEach( event => {
+                            if (event.triggerDate === this.getDate())
                             {
                                 if (event.triggerFn)
                                 {
@@ -195,7 +194,7 @@ const Game = {
                                     Game.createNotification(event.notification);
                                 }
 
-                                _this.events = _this.events.filter( (e) => e.eventId !== event.eventId );
+                                this.events = this.events.filter( (e) => e.eventId !== event.eventId );
                             }
 
                             if (event.triggerDate === "monthly")
@@ -226,7 +225,7 @@ const Game = {
                                     Game.createNotification(event.notification);
                                 }
                             }
-                        });
+                        } );
                     }
 
                     if (this.notifications.length > 0)
@@ -275,13 +274,11 @@ const Game = {
                         year = year + 1;
                         month = 1;
                     }
-
-                    document.getElementById('date-text').innerText = `Day ${day} Week ${week} Month ${month} Year ${year}`;
                 }
             }, DAY_INTERVAL );
 
             escMenu = (e) => {
-                if(e.keyCode === 27)
+                if (e.keyCode === 27)
                 {
                     togglePause();
                 }
@@ -291,57 +288,49 @@ const Game = {
 
             continueBtn.show();
             continueBtn.on('click', () => {
-                Game.paused = !Game.paused;
+                Game.paused = false;
                 menu.hide();
                 game.show();
             });
 
             createTeam.show();
 
-            if (mainCharacter)
-            {
-                moneyText.text(mainCharacter.money + '$');
-            }
+            moneyText.text(MAIN_CHARACTER.money + '$');
 
             this.initialized = true;
         }
     }
 };
 
-class TeamManager {
-
+class Manager {
     constructor (name = "Player") {
-        const _this  = this;
-
-        this.nick    = name;
+        this.name    = name;
         this.teams   = [];
         this.money   = 1000;
         this.level   = 1;
-        this.id      = managerId;
+        this.id      = managerId = managerId + 1;
 
-        // monthly costs like food, clothes etc.
-        Game.pushEvent({
-            eventId : 'DTMS-EVENT-MONTHLY-COSTS',
-            triggerDate : "monthly",
-            triggerFn : function () {
-                _this.changeMoney(-150, "Monthly costs");
-            }
-        });
-
+        // initial event
         Game.pushEvent({
             eventId : 'DTMS-EVENT-NEWMANAGER#' + managerId,
-            triggerDate : Game.daysToDate(3),
+            triggerDate : Game.daysToDate(2),
             notification : {
                 title : 'News',
-                msg : `New manager called ${_this.nick} appeared in professional Dota scene. We wish him good luck in startup!`
+                msg : `New manager called '${this.name}' appeared in a professional Dota 2 scene. We wish him good luck in startup!`
             }
         });
 
-        for (let event of decisions.inst.makeEvents(_this, Game)) {
+        // monthly costs
+        Game.pushEvent({
+            eventId : 'DTMS-EVENT-MONTHLY-COSTSMANAGER#' + managerId,
+            triggerDate : "monthly",
+            triggerFn : () => this.changeMoney(-150, "Monthly costs")
+        });
+
+        // refac, cuz it gonna be attached to every manager, that will be created.
+        for (let event of decisions.inst.makeEvents(this, Game)) {
             Game.pushEvent(event);
         }
-
-        managerId++;
     }
 
     createTeam (teamTitle) {
@@ -389,7 +378,6 @@ class TeamManager {
 }
 
 class Team {
-
     constructor (title, managerData) {
         const _this     = this;
 
@@ -408,7 +396,7 @@ class Team {
 
         if (!title)
         {
-            this.title =  this.manager.nick + "\'s team";
+            this.title =  this.manager.name + "\'s team";
         }
 
         teamId++;
@@ -478,7 +466,7 @@ const gameStarting = () => {
             characterInput.removeClass('form-control-danger');
             characterInput.parent().removeClass('has-danger');
 
-            mainCharacter = new TeamManager(characterInput.val());
+            MAIN_CHARACTER = new Manager(characterInput.val());
 
             document.body.style.backgroundColor = "#19273c";
             document.body.style.color = "azure";

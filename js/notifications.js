@@ -87,7 +87,7 @@ const _init = (fn) => {
     }
 };
 
-exports.Notifications = {
+module.exports = {
     create : _create,
     init   : _init
 };

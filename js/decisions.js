@@ -9,7 +9,7 @@ let Decisions = function()
     let flags = {};
 
     /**
-     * @param {TeamManager} player
+     * @param {Manager} player
      * @param {Game}        game - not actually a valid type hint, but provides Ctrl+B at least
      * @param {Function}    game.createNotification
      * @param {Function}    game.over
@@ -18,18 +18,15 @@ let Decisions = function()
         let showMsg = (msg) => game.createNotification({title : 'News', msg : msg});
         return [
             {
-                eventId : 'DTMS-EVENT-NEWMANAGER#' + player.id + Math.random(),
+                eventId : 'DTMS-EVENT-' + player.id + Math.random(),
                 triggerDate : game.daysToDate(7),
                 triggerFn : function () {
                     flags.cameToLanParty = confirm('A friend of yours invited you to a lan party to play custom W3 maps. Are you going?');
                     if (flags.cameToLanParty) {
                         showMsg('On the way there you found a 5 bucks on the road, it surely was worth coming!');
-                        player.changeMoney(5);
+                        player.changeMoney(+5);
                     } else {
-                        game.createNotification({
-                            title : 'News',
-                            msg : 'You spent whole day studying, what a looser!',
-                        });
+                        showMsg('You spent whole day studying, what a looser!');
                     }
                 }
             },
