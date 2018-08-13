@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/dogzy123/dota-team-manager-simulator#readme",
   "dependencies": {
-    "electron": "^1.8.2"
+    "electron": "^1.8.3"
   }
 }

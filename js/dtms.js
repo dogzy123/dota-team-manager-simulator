@@ -24,9 +24,8 @@ let MAIN_CHARACTER;
 let escMenu;                    // pause/menu toggle
 
 const Game = {
-    // tournaments template
     paused          : false,
-
+    initialized     : false,
     tournaments     : {
         level1 : [
             {
@@ -36,15 +35,18 @@ const Game = {
             }
         ]
     },
-
-    initialized     : false,
-
     events          : [],
-
     notifications   : [],
 
-    daysToDate      : function ( days )
-    {
+    pause           : function () {
+        Game.paused = true;
+    },
+
+    unpause         : function () {
+        Game.paused = false;
+    },
+
+    daysToDate      : function ( days ) {
         let daysTotal = days + day;
 
         let newDays = daysTotal % 7 === 0 ? 7 : daysTotal % 7;
@@ -68,13 +70,11 @@ const Game = {
         return newDays + '/' + newWeeks + '/' + newMonth + '/' + newYear;
     },
 
-    getDate         : function ()
-    {
+    getDate         : function () {
         return day + '/' + week + '/' + month + '/' + year;
     },
 
-    pushEvent       : function ( obj )
-    {
+    pushEvent       : function ( obj ) {
         let uniqueId = true;
 
         if (this.events.length > 0)
@@ -97,8 +97,7 @@ const Game = {
         }
     },
 
-    createNotification : function ( obj )
-    {
+    createNotification : function ( obj ) {
         let message;
 
         message = Notifications.create({
@@ -114,19 +113,15 @@ const Game = {
             }
         });
 
-        message.init = function () {
-            Game.paused = true;
-        };
+        message.init = () => Game.pause();
 
         if (obj.buttons)
         {
-            message = Notifications.Notifications.create({
+            message = Notifications.create({
                 title     : obj.title,
                 msg       : obj.msg,
                 buttons   : obj.buttons,
-                callback  : function () {
-                    Game.paused = false;
-                }
+                callback  : () => Game.unpause()
             });
         }
 
@@ -141,15 +136,12 @@ const Game = {
         return gameStarting();
     },
 
-    init            : function ()
-    {
+    init            : function () {
         if (!this.initialized)
         {
             const DAY_INTERVAL = 2000;
 
-            Game.paused = false;
-
-            const togglePause = () => {
+            const togglePause = e => {
                 Game.paused = !Game.paused;
 
                 if (game.css('display') === "none")
@@ -164,14 +156,25 @@ const Game = {
                 if (menu.css('display') === "none")
                 {
                     menu.show();
-                    $('#new-game').on('click', function () {
-                        gameStarting();
-                    })
+                    $('#new-game').on('click', () => gameStarting());
                 }
                 else
                 {
                     menu.hide();
                 }
+            };
+
+            escMenu = e => {
+                if (e.keyCode === 27)
+                {
+                    togglePause();
+                }
+            };
+
+            const continueEvent = e => {
+                Game.paused = false;
+                menu.hide();
+                game.show();
             };
 
             time = setInterval( () => {
@@ -230,12 +233,11 @@ const Game = {
 
                     if (this.notifications.length > 0)
                     {
-                        const _this = this;
                         const backdrop = $('#backdrop');
 
                         let current = '', next = true;
 
-                        this.notifications.forEach(function (notification) {
+                        this.notifications.forEach( notification => {
                             if (next)
                             {
                                 current = notification;
@@ -247,12 +249,12 @@ const Game = {
 
                                 next = false;
 
-                                if (_this.notifications.indexOf(current) > -1)
+                                if (this.notifications.indexOf(current) > -1)
                                 {
-                                   _this.notifications.splice(_this.notifications.indexOf(current), 1);
+                                    this.notifications.splice(this.notifications.indexOf(current), 1);
                                 }
                             }
-                        });
+                        } );
                     }
 
                     day = day + 1;
@@ -277,25 +279,16 @@ const Game = {
                 }
             }, DAY_INTERVAL );
 
-            escMenu = (e) => {
-                if (e.keyCode === 27)
-                {
-                    togglePause();
-                }
-            };
-
+            // events & handlers
             document.body.addEventListener('keydown', escMenu);
+            continueBtn.on('click', continueEvent);
 
             continueBtn.show();
-            continueBtn.on('click', () => {
-                Game.paused = false;
-                menu.hide();
-                game.show();
-            });
-
             createTeam.show();
 
             moneyText.text(MAIN_CHARACTER.money + '$');
+
+            Game.paused = false;
 
             this.initialized = true;
         }
@@ -320,6 +313,15 @@ class Manager {
             }
         });
 
+        Game.pushEvent({
+            eventId : 'DTMS-NOTIFICATION-WITH-OPTIONS',
+            triggerDate : Game.daysToDate(3),
+            notification : {
+                title : 'News',
+
+            }
+        });
+
         // monthly costs
         Game.pushEvent({
             eventId : 'DTMS-EVENT-MONTHLY-COSTSMANAGER#' + managerId,
@@ -327,10 +329,10 @@ class Manager {
             triggerFn : () => this.changeMoney(-150, "Monthly costs")
         });
 
-        // refac, cuz it gonna be attached to every manager, that will be created.
-        for (let event of decisions.inst.makeEvents(this, Game)) {
+        // refac, cuz it is attached to every manager on creation.
+        /*for (let event of decisions.inst.makeEvents(this, Game)) {
             Game.pushEvent(event);
-        }
+        }*/
     }
 
     createTeam (teamTitle) {
@@ -346,8 +348,9 @@ class Manager {
     }
 
     changeMoney (amount, description) {
-        let textClass = "";
-        this.money = this.money + amount;
+        let textClass = "text-success";
+
+        this.money = this.money + parseInt(amount);
 
         if (amount < 0)
         {
@@ -355,12 +358,11 @@ class Manager {
         }
         else
         {
-            textClass = "text-success";
             amount = "+" + amount;
         }
 
         moneyText.text(this.money + "$");
-        costsText.text(amount);
+        costsText.text(amount + "$");
 
         if (description)
         {
@@ -431,13 +433,13 @@ class Team {
 const reInitialize = () => {
     if (time) clearInterval(time);
 
-    teamId = 0;
-    managerId = 0;
-    day = 1;
-    week = 1;
-    month = 1;
-    year = 1;
-    document.getElementById('date-text').innerText = `Day ${day} Week ${week} Month ${month} Year ${year}`;
+    teamId      = 0;
+    managerId   = 0;
+    day         = 1;
+    week        = 1;
+    month       = 1;
+    year        = 1;
+    dateText.innerHTML = `Day ${day} Week ${week} Month ${month} Year ${year}`;
     Game.initialized = false;
     Game.events = [];
     Game.notifications = [];
@@ -463,10 +465,10 @@ const gameStarting = () => {
     characterButton.on('click', function () {
         if (characterInput.val())
         {
+            MAIN_CHARACTER = new Manager(characterInput.val());
+
             characterInput.removeClass('form-control-danger');
             characterInput.parent().removeClass('has-danger');
-
-            MAIN_CHARACTER = new Manager(characterInput.val());
 
             document.body.style.backgroundColor = "#19273c";
             document.body.style.color = "azure";
