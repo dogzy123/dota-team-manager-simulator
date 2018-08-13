@@ -21,7 +21,7 @@ let teamId = 0, managerId = 0;  // unique ids
 let day, week, month, year;     // date
 let time;                       // date function
 let MAIN_CHARACTER;
-let escMenu;                    // pause/menu toggle
+let escMenuEvent;               // pause/menu toggle
 
 const Game = {
     paused          : false,
@@ -139,42 +139,6 @@ const Game = {
         {
             const DAY_INTERVAL = 2000;
 
-            const togglePause = e => {
-                Game.paused = !Game.paused;
-
-                if (game.css('display') === "none")
-                {
-                    game.show();
-                }
-                else
-                {
-                    game.hide();
-                }
-
-                if (menu.css('display') === "none")
-                {
-                    menu.show();
-                    $('#new-game').on('click', () => gameStarting());
-                }
-                else
-                {
-                    menu.hide();
-                }
-            };
-
-            escMenu = e => {
-                if (e.keyCode === 27)
-                {
-                    togglePause();
-                }
-            };
-
-            const continueEvent = e => {
-                Game.paused = false;
-                menu.hide();
-                game.show();
-            };
-
             const triggerEvent = e => {
                 if (e.triggerFn)
                 {
@@ -187,7 +151,8 @@ const Game = {
                 }
             };
 
-            time = setInterval( () => {
+            // main frame func
+            const update = () => {
                 if (!Game.paused)
                 {
                     dateText.innerHTML = `Day ${day} Week ${week} Month ${month} Year ${year}`;
@@ -269,11 +234,50 @@ const Game = {
                         })
                     }
                 }
-            }, DAY_INTERVAL );
+            };
 
             // events & handlers
-            document.body.addEventListener('keydown', escMenu);
+            escMenuEvent = e => {
+                if (e.keyCode === 27)
+                {
+                    Game.paused = !Game.paused;
+
+                    if (game.css('display') === "none")
+                    {
+                        game.show();
+                    }
+                    else
+                    {
+                        game.hide();
+                    }
+
+                    if (menu.css('display') === "none")
+                    {
+                        menu.show();
+                        $('#new-game').on('click', () => gameStarting());
+                    }
+                    else
+                    {
+                        menu.hide();
+                    }
+                }
+            };
+
+            const continueEvent = e => {
+                Game.paused = false;
+                menu.hide();
+                game.show();
+            };
+
+            const createTeamEvent = e => {
+
+            };
+
+            time = setInterval( update, DAY_INTERVAL );
+
+            document.body.addEventListener('keydown', escMenuEvent);
             continueBtn.on('click', continueEvent);
+            createTeam.on('click', createTeamEvent);
 
             continueBtn.show();
             createTeam.show();
@@ -319,7 +323,7 @@ class Manager {
     }
 
     createTeam (teamTitle) {
-        this.teams.push(new Team(teamTitle, this));
+        this.teams.push(new Team( teamTitle, this ));
     }
 
     disbandTeam (teamId) {
@@ -363,28 +367,19 @@ class Manager {
 }
 
 class Team {
-    constructor (title, managerData) {
-        const _this     = this;
-
-        this.id         = teamId;
+    constructor (title = "Default team", managerData) {
+        this.id         = teamId = teamId + 1;
         this.title      = title;
         this.manager    = managerData;
         this.players    = [];
-        this.postions   = {
-            1   : '',
-            2   : '',
-            3   : '',
-            4   : '',
-            5   : ''
-        };
         this.progress   = 0;
-
-        if (!title)
-        {
-            this.title =  this.manager.name + "\'s team";
-        }
-
-        teamId++;
+        this.postions   = {
+            1   : null,
+            2   : null,
+            3   : null,
+            4   : null,
+            5   : null
+        };
     }
 
     // TODO make finding players
@@ -427,7 +422,7 @@ const reInitialize = () => {
     Game.events = [];
     Game.notifications = [];
 
-    document.body.removeEventListener('keydown', escMenu);
+    document.body.removeEventListener('keydown', escMenuEvent);
 
     moneyText.text("");
 };
