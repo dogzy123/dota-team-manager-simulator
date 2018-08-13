@@ -103,17 +103,15 @@ const Game = {
         message = Notifications.create({
             title     : obj.title,
             msg       : obj.msg,
-            onConfirm : function () {
+            onConfirm : () => {
                 if (obj.onConfirm)
                 {
                     obj.onConfirm();
                 }
 
-                Game.paused = false;
+                Game.unpause();
             }
         });
-
-        message.init = () => Game.pause();
 
         if (obj.buttons)
         {
@@ -177,26 +175,29 @@ const Game = {
                 game.show();
             };
 
-            time = setInterval( () => {
-                dateText.innerHTML = `Day ${day} Week ${week} Month ${month} Year ${year}`;
+            const triggerEvent = e => {
+                if (e.triggerFn)
+                {
+                    e.triggerFn();
+                }
 
+                if (e.notification)
+                {
+                    this.createNotification(e.notification);
+                }
+            };
+
+            time = setInterval( () => {
                 if (!Game.paused)
                 {
+                    dateText.innerHTML = `Day ${day} Week ${week} Month ${month} Year ${year}`;
+
                     if (this.events.length > 0)
                     {
                         this.events.forEach( event => {
                             if (event.triggerDate === this.getDate())
                             {
-                                if (event.triggerFn)
-                                {
-                                    event.triggerFn();
-                                }
-
-                                if (event.notification)
-                                {
-                                    Game.createNotification(event.notification);
-                                }
-
+                                triggerEvent(event);
                                 this.events = this.events.filter( (e) => e.eventId !== event.eventId );
                             }
 
@@ -204,29 +205,13 @@ const Game = {
                             {
                                 if (day === 7 && week === 4)
                                 {
-                                    if (event.triggerFn)
-                                    {
-                                        event.triggerFn();
-                                    }
-
-                                    if (event.notification)
-                                    {
-                                        Game.createNotification(event.notification);
-                                    }
+                                    triggerEvent(event);
                                 }
                             }
 
                             if (event.triggerDate === "daily")
                             {
-                                if (event.triggerFn)
-                                {
-                                    event.triggerFn();
-                                }
-
-                                if (event.notification)
-                                {
-                                    Game.createNotification(event.notification);
-                                }
+                                triggerEvent(event);
                             }
                         } );
                     }
@@ -235,23 +220,21 @@ const Game = {
                     {
                         const backdrop = $('#backdrop');
 
-                        let current = '', next = true;
+                        let next = true;
 
                         this.notifications.forEach( notification => {
                             if (next)
                             {
-                                current = notification;
-
-                                $('#notifications').append(current);
-                                backdrop.addClass('modal-backdrop');
-
-                                current.init();
-
                                 next = false;
 
-                                if (this.notifications.indexOf(current) > -1)
+                                Game.pause();
+
+                                $('#notifications').append(notification);
+                                backdrop.addClass('modal-backdrop');
+
+                                if (this.notifications.indexOf(notification) > -1)
                                 {
-                                    this.notifications.splice(this.notifications.indexOf(current), 1);
+                                    this.notifications.splice(this.notifications.indexOf(notification), 1);
                                 }
                             }
                         } );
@@ -276,6 +259,15 @@ const Game = {
                         year = year + 1;
                         month = 1;
                     }
+
+                    if (MAIN_CHARACTER.money < 1) // lost
+                    {
+                        this.createNotification({
+                            title: 'GAME INFO',
+                            msg : 'You lost! Try again. Maybe you should\'ve get another players in your team. :D',
+                            onConfirm : () => clearInterval(time)
+                        })
+                    }
                 }
             }, DAY_INTERVAL );
 
@@ -299,7 +291,7 @@ class Manager {
     constructor (name = "Player") {
         this.name    = name;
         this.teams   = [];
-        this.money   = 1000;
+        this.money   = 150;
         this.level   = 1;
         this.id      = managerId = managerId + 1;
 
@@ -310,15 +302,6 @@ class Manager {
             notification : {
                 title : 'News',
                 msg : `New manager called '${this.name}' appeared in a professional Dota 2 scene. We wish him good luck in startup!`
-            }
-        });
-
-        Game.pushEvent({
-            eventId : 'DTMS-NOTIFICATION-WITH-OPTIONS',
-            triggerDate : Game.daysToDate(3),
-            notification : {
-                title : 'News',
-
             }
         });
 

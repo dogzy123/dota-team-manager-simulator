@@ -80,14 +80,6 @@ const _create = (params) => {
     );
 };
 
-const _init = (fn) => {
-    if (fn && typeof fn === 'function')
-    {
-        fn();
-    }
-};
-
 module.exports = {
-    create : _create,
-    init   : _init
+    create : _create
 };
