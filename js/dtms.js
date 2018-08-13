@@ -2,7 +2,8 @@
 //const PLAYERS_DB = players.players;  //array of players
 
 const decisions = require('./decisions.js');
-const Notifications = require('./notifications');
+const Notifications = require('./notificationModal');
+const TeamModal = require('./teamModal');
 
 // HTML CONSTANTS
 const characterDialog = $('#create-form');
@@ -14,6 +15,7 @@ const costsText       = $('#costs-text');
 const costsDescr      = $('#costs-description');
 const game            = $('#game');
 const menu            = $('#menu');
+const newGameBtn      = $('#new-game');
 const continueBtn     = $('#continue');
 const createTeam      = $('#create-team');
 
@@ -155,8 +157,6 @@ const Game = {
             const update = () => {
                 if (!Game.paused)
                 {
-                    dateText.innerHTML = `Day ${day} Week ${week} Month ${month} Year ${year}`;
-
                     if (this.events.length > 0)
                     {
                         this.events.forEach( event => {
@@ -233,6 +233,8 @@ const Game = {
                             onConfirm : () => clearInterval(time)
                         })
                     }
+
+                    dateText.innerHTML = `Day ${day} Week ${week} Month ${month} Year ${year}`;
                 }
             };
 
@@ -242,24 +244,9 @@ const Game = {
                 {
                     Game.paused = !Game.paused;
 
-                    if (game.css('display') === "none")
-                    {
-                        game.show();
-                    }
-                    else
-                    {
-                        game.hide();
-                    }
-
-                    if (menu.css('display') === "none")
-                    {
-                        menu.show();
-                        $('#new-game').on('click', () => gameStarting());
-                    }
-                    else
-                    {
-                        menu.hide();
-                    }
+                    game.css('display') === "none" ? game.show() : game.hide();
+                    menu.css('display') === "none" ? menu.show() : menu.hide();
+                    createTeam.css('display') === "none" ? createTeam.show() : createTeam.hide();
                 }
             };
 
@@ -270,12 +257,13 @@ const Game = {
             };
 
             const createTeamEvent = e => {
-
+                $('#notifications').append(TeamModal.create());
             };
 
             time = setInterval( update, DAY_INTERVAL );
 
             document.body.addEventListener('keydown', escMenuEvent);
+            newGameBtn.on('click', () => gameStarting());
             continueBtn.on('click', continueEvent);
             createTeam.on('click', createTeamEvent);
 
@@ -295,7 +283,7 @@ class Manager {
     constructor (name = "Player") {
         this.name    = name;
         this.teams   = [];
-        this.money   = 150;
+        this.money   = 1000;
         this.level   = 1;
         this.id      = managerId = managerId + 1;
 
@@ -448,7 +436,7 @@ const gameStarting = () => {
             characterInput.removeClass('form-control-danger');
             characterInput.parent().removeClass('has-danger');
 
-            document.body.style.backgroundColor = "#19273c";
+            document.body.style.backgroundColor = "rgba(3, 8, 16, 0.75)";
             document.body.style.color = "azure";
 
             characterDialog.hide();

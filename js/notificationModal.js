@@ -2,13 +2,13 @@ const backdrop = $('#backdrop');
 
 const _getBody = (body) => {
     return $('<div class="modal-body">').append(
-        $('<p>'+ body +'</p>')
+        $('<span class="notification-text">'+ body +'</span>')
     );
 };
 
 const _getHeader = (header, template) => {
     return $('<div class="modal-header">').append(
-        $('<h5>' + header + '</h5>'),
+        $('<span class="notification-title">' + header + '</span>'),
         $('<button type="button" class="close">').append(
             $('<span>&times;</span>').on('click', () => {
                 template.remove();

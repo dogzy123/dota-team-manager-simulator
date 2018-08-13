@@ -7,7 +7,7 @@ let mainWindow, url;
 
 app.on('ready', function () {
     mainWindow = new BrowserWindow({
-        fullscreen      : false,
+        fullscreen      : true,
         useContentSize  : true,
         resizable       : false,
         minWidth        : 800,
