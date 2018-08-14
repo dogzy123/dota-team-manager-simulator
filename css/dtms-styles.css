@@ -1,0 +1,91 @@
+body {
+    font-family: 'Quicksand', sans-serif;
+    color: azure;
+    background-color: rgba(3, 8, 16, 0.75);
+    transition: background-color 0.15s ease-in;
+}
+
+#game {
+    margin: 15px auto;
+}
+
+#date {
+    text-align: left;
+}
+
+.text {
+    font-size: 22px;
+    font-weight: 500;
+}
+
+.notification-text {
+    font-size: 22px;
+}
+
+.notification-title {
+    font-size: 28px;
+    font-weight: 500;
+}
+
+#menu {
+    width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 100px;
+}
+
+#costs-description {
+    margin-left: 5px;
+    opacity: 0;
+    transition: opacity 0.11s ease-in;
+}
+
+#costs-text {
+    opacity: 0;
+    transition: opacity 0.11s ease-in;
+}
+
+.dtms-modal {
+    color : #1d1e1f;
+    display: block;
+}
+
+.costs-reveal {
+    opacity: 1 !important;
+}
+
+#create-form {
+    margin-top: 100px;
+    background-color: #1d1e1f;
+    border: 1px solid azure;
+    margin-left: auto;
+    margin-right: auto;
+    color : azure;
+    height: 210px;
+    width: 600px;
+    transition: opacity 0.15s ease-in;
+}
+
+#backdrop {
+    opacity: 0;
+    transition: opacity 0.11s ease-in;
+}
+
+#create-team {
+    margin-top: 50px;
+}
+
+#team-name-btn {
+    width: 100%;
+}
+
+.btn-team {
+    padding: 50px 150px;
+    font-size: 36px;
+    text-transform: uppercase;
+    border: 3px solid;
+}
+
+.modal-backdrop {
+    opacity: 0.75 !important;
+}

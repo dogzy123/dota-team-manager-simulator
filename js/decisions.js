@@ -26,7 +26,7 @@ let Decisions = function()
                         showMsg('On the way there you found a 5 bucks on the road, it surely was worth coming!');
                         player.changeMoney(+5);
                     } else {
-                        showMsg('You spent whole day studying, what a looser!');
+                        showMsg('You spent whole day studying, what a loser!');
                     }
                 }
             },

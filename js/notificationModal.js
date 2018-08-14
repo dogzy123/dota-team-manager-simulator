@@ -1,12 +1,14 @@
 const backdrop = $('#backdrop');
 
-const _getBody = (body) => {
+let template;
+
+const _getBody = body => {
     return $('<div class="modal-body">').append(
         $('<span class="notification-text">'+ body +'</span>')
     );
 };
 
-const _getHeader = (header, template) => {
+const _getHeader = header => {
     return $('<div class="modal-header">').append(
         $('<span class="notification-title">' + header + '</span>'),
         $('<button type="button" class="close">').append(
@@ -18,21 +20,42 @@ const _getHeader = (header, template) => {
     );
 };
 
-const _create = (params) => {
-    const template  = $('<div class="modal dtms-modal">');
+const _getFooter = options => {
+    const footer = $('<div class="modal-footer">');
+
+    options.forEach( opt => {
+        footer.append(
+            $('<button type="button" class="btn btn-warning">'+ opt.title +'</button>').on('click', e => {
+                template.remove();
+                backdrop.removeClass('modal-backdrop');
+
+                if (opt.triggerFn)
+                {
+                    opt.triggerFn();
+                }
+            })
+        );
+    } );
+
+    return footer;
+};
+
+const _create = params => {
     const mDialog   = $('<div class="modal-dialog">');
     const mContent  = $('<div class="modal-content">');
+
+    template  = $('<div class="modal dtms-modal">');
 
     const confirmButton = $('<button type="button" class="btn btn-warning">OK</button>').on('click', () => {
         template.remove();
         backdrop.removeClass('modal-backdrop');
     });
 
-    let mHeader, mBody, mFooter;
+    let mHeader, mBody, mFooter = $('<div class="modal-footer">');
 
     if (params.title)
     {
-        mHeader = _getHeader(params.title, template);
+        mHeader = _getHeader(params.title);
     }
 
     if (params.msg)
@@ -40,22 +63,7 @@ const _create = (params) => {
         mBody = _getBody(params.msg);
     }
 
-    mFooter = $('<div class="modal-footer">');
-
-    if (params.buttons)
-    {
-        params.buttons.forEach( (button) => {
-            mFooter.append(
-                $('<button type="button" class="btn btn-warning">'+ button.name +'</button>').on('click', function () {
-                    button.callback();
-                    template.remove();
-                    params.callback();
-                })
-            );
-        } );
-    }
-
-    if (params.onConfirm && !params.buttons)
+    if (params.onConfirm)
     {
         confirmButton.on('click', function () {
             if (typeof params.onConfirm === 'function')
@@ -67,6 +75,11 @@ const _create = (params) => {
         });
 
         mFooter.append(confirmButton);
+    }
+
+    if (params.decisions.length)
+    {
+        mFooter = _getFooter(params.decisions);
     }
 
     return template.append(

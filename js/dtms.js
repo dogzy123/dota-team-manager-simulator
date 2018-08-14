@@ -1,25 +1,28 @@
 // players database temporary deleted
 //const PLAYERS_DB = players.players;  //array of players
 
-const decisions = require('./decisions.js');
+const decisions     = require('./decisions.js');
 const Notifications = require('./notificationModal');
-const TeamModal = require('./teamModal');
+const TeamModal     = require('./teamModal');
 
 // HTML CONSTANTS
 const characterDialog = $('#create-form');
 const characterButton = $('#create-character');
 const characterInput  = $('#inlineFormInputGroup');
 const moneyText       = $('#money-text');
+const notificationBlock = $('#notifications');
 const dateText        = document.getElementById("date-text");
 const costsText       = $('#costs-text');
 const costsDescr      = $('#costs-description');
 const game            = $('#game');
 const menu            = $('#menu');
-const newGameBtn      = $('#new-game');
+const createTeamBlock = $('#create-team');
 const continueBtn     = $('#continue');
-const createTeam      = $('#create-team');
+const createTeamBtn   = $('#create-team-btn');
 
-let teamId = 0, managerId = 0;  // unique ids
+let teamCreationBtn, teamCreationInput, backDrop;
+
+let teamId, managerId;          // unique ids
 let day, week, month, year;     // date
 let time;                       // date function
 let MAIN_CHARACTER;
@@ -76,6 +79,43 @@ const Game = {
         return day + '/' + week + '/' + month + '/' + year;
     },
 
+    createNotification : function ( data ) {
+        let decisions = [];
+
+        if (data.options && data.triggers)
+        {
+            for (let i = 0; i < data.options.length; i++)
+            {
+                decisions.push({
+                    title: data.options[i],
+                    triggerFn: () => {
+                        data.triggers[i]();
+                        Game.unpause();
+                    }
+                });
+            }
+        }
+
+        const onConfirmEvent = () => {
+            if (data.onConfirm && typeof data.onConfirm === 'function')
+            {
+                data.onConfirm();
+            }
+
+            Game.unpause();
+            backDrop = null;
+        };
+
+        return this.notifications.push(
+            Notifications.create({
+                title     : data.title,
+                msg       : data.msg,
+                decisions : decisions,
+                onConfirm : onConfirmEvent
+            })
+        );
+    },
+
     pushEvent       : function ( obj ) {
         let uniqueId = true;
 
@@ -99,57 +139,36 @@ const Game = {
         }
     },
 
-    createNotification : function ( obj ) {
-        let message;
-
-        message = Notifications.create({
-            title     : obj.title,
-            msg       : obj.msg,
-            onConfirm : () => {
-                if (obj.onConfirm)
-                {
-                    obj.onConfirm();
-                }
-
-                Game.unpause();
-            }
-        });
-
-        if (obj.buttons)
-        {
-            message = Notifications.create({
-                title     : obj.title,
-                msg       : obj.msg,
-                buttons   : obj.buttons,
-                callback  : () => Game.unpause()
-            });
-        }
-
-        this.notifications.push(message);
-    },
-
     over            : function () {
         return reInitialize();
     },
 
     start           : function () {
-        return gameStarting();
+        reInitialize();
+
+        characterDialog.show();
+        characterDialog.css('opacity', "1");
     },
 
-    init            : function () {
+    init            : function ( manager ) {
         if (!this.initialized)
         {
             const DAY_INTERVAL = 2000;
 
             const triggerEvent = e => {
-                if (e.triggerFn)
-                {
-                    e.triggerFn();
-                }
-
                 if (e.notification)
                 {
-                    this.createNotification(e.notification);
+                    if (e.triggerFn)
+                    {
+                        return this.createNotification(e.notification, e.triggerFn);
+                    }
+
+                    return this.createNotification(e.notification);
+                }
+
+                if (e.triggerFn)
+                {
+                    return e.triggerFn();
                 }
             };
 
@@ -194,8 +213,11 @@ const Game = {
 
                                 Game.pause();
 
-                                $('#notifications').append(notification);
+                                notificationBlock.append(notification);
+                                notificationBlock.show();
+
                                 backdrop.addClass('modal-backdrop');
+                                backDrop = backdrop;
 
                                 if (this.notifications.indexOf(notification) > -1)
                                 {
@@ -244,38 +266,67 @@ const Game = {
                 {
                     Game.paused = !Game.paused;
 
-                    game.css('display') === "none" ? game.show() : game.hide();
-                    menu.css('display') === "none" ? menu.show() : menu.hide();
-                    createTeam.css('display') === "none" ? createTeam.show() : createTeam.hide();
+                    if (Game.paused)
+                    {
+                        menu.show();
+
+                        game.hide();
+                        notificationBlock.hide();
+                        createTeamBlock.hide();
+
+                        if (backDrop)
+                        {
+                            backDrop.removeClass('modal-backdrop');
+                        }
+                    }
+                    else
+                    {
+                        menu.hide();
+
+                        game.show();
+                        notificationBlock.show();
+                        createTeamBlock.show();
+
+                        if (backDrop)
+                        {
+                            backDrop.addClass('modal-backdrop');
+                            Game.pause();
+                        }
+                    }
                 }
             };
 
-            const continueEvent = e => {
-                Game.paused = false;
-                menu.hide();
-                game.show();
-            };
-
             const createTeamEvent = e => {
-                $('#notifications').append(TeamModal.create());
+                MAIN_CHARACTER.createTeam(teamCreationInput.val());
             };
 
+            const createTeamModalShow = e => {
+                notificationBlock.append(TeamModal.create());
+
+                teamCreationBtn    = $('#team-name-btn');
+                teamCreationInput  = $('#team-name');
+
+                teamCreationBtn.on('click', createTeamEvent);
+            };
+
+            MAIN_CHARACTER = manager;
             time = setInterval( update, DAY_INTERVAL );
 
             document.body.addEventListener('keydown', escMenuEvent);
-            newGameBtn.on('click', () => gameStarting());
-            continueBtn.on('click', continueEvent);
-            createTeam.on('click', createTeamEvent);
+
+            createTeamBtn.on('click', createTeamModalShow);
 
             continueBtn.show();
-            createTeam.show();
+            createTeamBlock.show();
 
             moneyText.text(MAIN_CHARACTER.money + '$');
 
             Game.paused = false;
 
-            this.initialized = true;
+            return this.initialized = true;
         }
+
+        return false;
     }
 };
 
@@ -293,7 +344,7 @@ class Manager {
             triggerDate : Game.daysToDate(2),
             notification : {
                 title : 'News',
-                msg : `New manager called '${this.name}' appeared in a professional Dota 2 scene. We wish him good luck in startup!`
+                msg : `New manager called '${this.name}' appeared in a slowly growing cybersport community. Wish him good luck!`
             }
         });
 
@@ -304,10 +355,39 @@ class Manager {
             triggerFn : () => this.changeMoney(-150, "Monthly costs")
         });
 
-        // refac, cuz it is attached to every manager on creation.
-        /*for (let event of decisions.inst.makeEvents(this, Game)) {
-            Game.pushEvent(event);
-        }*/
+        //decision dialog test
+        Game.pushEvent({
+            eventId: 'DTMS-EVENT-DECISION-DIALOG',
+            triggerDate: Game.daysToDate(4),
+            notification: {
+                title: 'Friend\'s call',
+                msg: "A friend of yours invited you to a lan party to play custom W3 maps. Are you going?",
+                options: ['Yes', 'Sorry, I\'m Pass'],
+                triggers: [
+                    () => {
+                        Game.createNotification({
+                            title: 'Info',
+                            msg: 'On the way there you found a 5 bucks on the road, it surely was worth coming!',
+                            onConfirm : () => this.changeMoney(+5)
+                        });
+                    },
+                    () => {
+                        Game.createNotification({
+                            title: 'Info',
+                            msg: 'You spent whole day studying, what a loser!'
+                        });
+                    }
+                ]
+            }
+        });
+
+        // check for main character
+        if (this.id === 1)
+        {
+            for (let event of decisions.inst.makeEvents(this, Game)) {
+                Game.pushEvent(event);
+            }
+        }
     }
 
     createTeam (teamTitle) {
@@ -327,14 +407,7 @@ class Manager {
 
         this.money = this.money + parseInt(amount);
 
-        if (amount < 0)
-        {
-            textClass = "text-danger";
-        }
-        else
-        {
-            amount = "+" + amount;
-        }
+        amount < 0 ? textClass = "text-danger" : amount = "+" + amount;
 
         moneyText.text(this.money + "$");
         costsText.text(amount + "$");
@@ -405,6 +478,7 @@ const reInitialize = () => {
     week        = 1;
     month       = 1;
     year        = 1;
+
     dateText.innerHTML = `Day ${day} Week ${week} Month ${month} Year ${year}`;
     Game.initialized = false;
     Game.events = [];
@@ -415,43 +489,7 @@ const reInitialize = () => {
     moneyText.text("");
 };
 
-const gameStarting = () => {
-    reInitialize();
-
-    characterDialog.show();
-    characterDialog.css('opacity', "1");
-
-    characterInput.on('keydown', e => {
-        if (e.keyCode === 13)
-        {
-            characterButton.focus();
-        }
-    });
-
-    characterButton.on('click', function () {
-        if (characterInput.val())
-        {
-            MAIN_CHARACTER = new Manager(characterInput.val());
-
-            characterInput.removeClass('form-control-danger');
-            characterInput.parent().removeClass('has-danger');
-
-            document.body.style.backgroundColor = "rgba(3, 8, 16, 0.75)";
-            document.body.style.color = "azure";
-
-            characterDialog.hide();
-            game.show();
-
-            Game.init();
-        }
-        else
-        {
-            characterInput.addClass('form-control-danger');
-            characterInput.parent().addClass('has-danger');
-        }
-    });
-};
-
 module.exports = {
-    Game : Game
+    Game : Game,
+    Manager : Manager
 };
