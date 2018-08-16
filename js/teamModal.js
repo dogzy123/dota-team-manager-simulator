@@ -10,7 +10,7 @@ const _create = handlers => {
        {
            closeIcon.on('click', e => {
                content.remove();
-               backDrop.removeClass('backdrop-modal');
+               backDrop.removeClass('modal-backdrop');
                handlers.onClose();
            });
        }

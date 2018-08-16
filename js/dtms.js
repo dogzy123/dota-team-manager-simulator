@@ -341,7 +341,7 @@ class Manager {
         // initial event
         Game.pushEvent({
             eventId : 'DTMS-EVENT-NEWMANAGER#' + managerId,
-            triggerDate : Game.daysToDate(1),
+            triggerDate : Game.daysToDate(2),
             notification : {
                 title : 'News',
                 msg : `New manager called '${this.name}' appeared in a slowly growing cybersport community. Wish him good luck!`
@@ -441,7 +441,7 @@ class Team {
 
         Game.pushEvent({
             eventId : 'DTMS-EVENT-NEWTEAM#' + this.id,
-            triggerDate : Game.daysToDate(1),
+            triggerDate : Game.daysToDate(2),
             notification : {
                 title : 'News',
                 msg : `New team under the name "${title}" was recently registered by ${this.manager.name}. Seems like they are planning something terrible in the good sense of this word. "Wait for it!"`

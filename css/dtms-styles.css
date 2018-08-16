@@ -18,6 +18,23 @@ body {
     font-weight: 500;
 }
 
+#team-list > .row {
+    margin-bottom: 25px;
+}
+
+.team {
+    min-height: 180px;
+    border: 4px solid azure;
+    border-radius: 5px;
+    width: 100%;
+    background-color: transparent;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.team:hover {
+    background-color: rgba(240, 255, 255, 0.13);
+}
+
 .notification-text {
     font-size: 22px;
 }
@@ -69,10 +86,6 @@ body {
 #backdrop {
     opacity: 0;
     transition: opacity 0.11s ease-in;
-}
-
-#create-team {
-    margin-top: 50px;
 }
 
 #team-name-btn {
