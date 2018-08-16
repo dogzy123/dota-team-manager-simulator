@@ -1,64 +1,15 @@
 const backdrop = $('#backdrop');
 
-let template;
-
-const _getBody = body => {
-    return $('<div class="modal-body">').append(
-        $('<span class="notification-text">'+ body +'</span>')
-    );
-};
-
-const _getHeader = header => {
-    return $('<div class="modal-header">').append(
-        $('<span class="notification-title">' + header + '</span>'),
-        $('<button type="button" class="close">').append(
-            $('<span>&times;</span>').on('click', () => {
-                template.remove();
-                backdrop.removeClass('modal-backdrop');
-            })
-        )
-    );
-};
-
-const _getFooter = options => {
-    const footer = $('<div class="modal-footer">');
-
-    options.forEach( opt => {
-        footer.append(
-            $('<button type="button" class="btn btn-warning">'+ opt.title +'</button>').on('click', e => {
-                backdrop.removeClass('modal-backdrop');
-                template.remove();
-
-                if (opt.triggerFn && typeof opt.triggerFn === 'function')
-                {
-                    opt.triggerFn();
-                }
-            })
-        );
-    } );
-
-    return footer;
-};
-
 const _create = params => {
+    const modalId = "dtms-modal" + Math.round(Date.now() * Math.random() + 1000);
+
+    let template = $('<div id="'+ modalId +'" class="dtms-modal modal">');
     const mContent  = $('<div class="modal-content">');
     const confirmButton = $('<button type="button" class="btn btn-warning">OK</button>');
 
-    let mHeader, mBody, mFooter = $('<div class="modal-footer">');
+    let mFooter = $('<div class="modal-footer">');
 
-    template = $('<div class="modal dtms-modal">');
-
-    if (params.title)
-    {
-        mHeader = _getHeader(params.title);
-    }
-
-    if (params.msg)
-    {
-        mBody = _getBody(params.msg);
-    }
-
-    if (params.onConfirm)
+    if (params.onConfirm && !params.decisions.length)
     {
         confirmButton.on('click', function () {
             if (typeof params.onConfirm === 'function')
@@ -68,6 +19,7 @@ const _create = params => {
 
             backdrop.removeClass('modal-backdrop');
             template.remove();
+            template = null;
         });
 
         mFooter.append(confirmButton);
@@ -75,14 +27,37 @@ const _create = params => {
 
     if (params.decisions.length)
     {
-        mFooter = _getFooter(params.decisions);
+        params.decisions.forEach( opt => {
+            mFooter.append(
+                $('<button type="button" class="btn btn-warning">'+ opt.title +'</button>').on('click', e => {
+                    backdrop.removeClass('modal-backdrop');
+                    template.remove();
+                    template = null;
+
+                    if (opt.triggerFn && typeof opt.triggerFn === 'function')
+                    {
+                        opt.triggerFn();
+                    }
+                })
+            );
+        } );
     }
 
     return template.append(
             $('<div class="modal-dialog">').append(
                 mContent.append(
-                    mHeader,
-                    mBody,
+                    $('<div class="modal-header">').append(
+                        $('<span class="notification-title">' + params.title + '</span>'),
+                        $('<button type="button" class="close">').append(
+                            $('<span>&times;</span>').on('click', e => {
+                                template.remove();
+                                backdrop.removeClass('modal-backdrop');
+                            })
+                        )
+                    ),
+                    $('<div class="modal-body">').append(
+                        $('<span class="notification-text">'+ params.msg +'</span>')
+                    ),
                     mFooter
                 )
             )

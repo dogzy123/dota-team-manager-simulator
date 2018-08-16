@@ -79,6 +79,7 @@ const Game = {
 
     createNotification : function ( data ) {
         let decisions = [];
+        let onConfirmEvent = () => {};
 
         if (data.options && data.triggers)
         {
@@ -89,19 +90,21 @@ const Game = {
                     triggerFn: () => {
                         data.triggers[i]();
                         Game.unpause();
+                        notificationBlock.html("");
                         backDrop = null;
                     }
                 });
             }
         }
 
-        const onConfirmEvent = () => {
+        onConfirmEvent = () => {
             if (data.onConfirm && typeof data.onConfirm === 'function')
             {
                 data.onConfirm();
             }
 
             Game.unpause();
+            notificationBlock.html("");
             backDrop = null;
         };
 
@@ -154,22 +157,17 @@ const Game = {
     init            : function ( manager ) {
         if (!this.initialized)
         {
-            const DAY_INTERVAL = 2000;
+            const DAY_INTERVAL = 1500;
 
             const triggerEvent = e => {
                 if (e.notification)
                 {
-                    if (e.triggerFn)
-                    {
-                        return this.createNotification(e.notification, e.triggerFn);
-                    }
-
-                    return this.createNotification(e.notification);
+                    this.createNotification(e.notification);
                 }
 
                 if (e.triggerFn)
                 {
-                    return e.triggerFn();
+                    e.triggerFn();
                 }
             };
 
@@ -177,18 +175,40 @@ const Game = {
             const update = () => {
                 if (!Game.paused)
                 {
+                    day = day + 1;
+
+                    if (day > 7 )
+                    {
+                        week = week + 1;
+                        day = 1;
+                    }
+
+                    if (week > 4)
+                    {
+                        month = month + 1;
+                        week = 1;
+                    }
+
+                    if (month > 12)
+                    {
+                        year = year + 1;
+                        month = 1;
+                    }
+
+                    dateText.innerHTML = `Day ${day} Week ${week} Month ${month} Year ${year}`;
+
                     if (this.events.length > 0)
                     {
                         this.events.forEach( event => {
                             if (event.triggerDate === this.getDate())
                             {
                                 triggerEvent(event);
-                                this.events = this.events.filter( (e) => e.eventId !== event.eventId );
+                                this.events = this.events.filter( e => e.eventId !== event.eventId );
                             }
 
                             if (event.triggerDate === "monthly")
                             {
-                                if (day === 7 && week === 4)
+                                if (day === 1 && week === 1)
                                 {
                                     triggerEvent(event);
                                 }
@@ -228,26 +248,6 @@ const Game = {
                         } );
                     }
 
-                    day = day + 1;
-
-                    if (day > 7 )
-                    {
-                        week = week + 1;
-                        day = 1;
-                    }
-
-                    if (week > 4)
-                    {
-                        month = month + 1;
-                        week = 1;
-                    }
-
-                    if (month > 12)
-                    {
-                        year = year + 1;
-                        month = 1;
-                    }
-
                     if (MAIN_CHARACTER.money < 1) // lost
                     {
                         this.createNotification({
@@ -256,8 +256,6 @@ const Game = {
                             onConfirm : () => clearInterval(time)
                         })
                     }
-
-                    dateText.innerHTML = `Day ${day} Week ${week} Month ${month} Year ${year}`;
                 }
             };
 
@@ -306,7 +304,6 @@ const Game = {
                     },
                     onCreate    : props => {
                         MAIN_CHARACTER.createTeam(props.name.trim());
-                        console.log(MAIN_CHARACTER);
                         Game.unpause();
                     }
                 }));
@@ -344,7 +341,7 @@ class Manager {
         // initial event
         Game.pushEvent({
             eventId : 'DTMS-EVENT-NEWMANAGER#' + managerId,
-            triggerDate : Game.daysToDate(2),
+            triggerDate : Game.daysToDate(1),
             notification : {
                 title : 'News',
                 msg : `New manager called '${this.name}' appeared in a slowly growing cybersport community. Wish him good luck!`
@@ -374,7 +371,8 @@ class Manager {
                         }),
                     () => Game.createNotification({
                             title: 'Info',
-                            msg: 'You spent whole day studying, what a loser!'
+                            msg: 'You spent whole day studying, what a loser!',
+                            onConfirm : () => Game.unpause()
                         })
                 ]
             }
