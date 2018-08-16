@@ -26,10 +26,10 @@ const _getFooter = options => {
     options.forEach( opt => {
         footer.append(
             $('<button type="button" class="btn btn-warning">'+ opt.title +'</button>').on('click', e => {
-                template.remove();
                 backdrop.removeClass('modal-backdrop');
+                template.remove();
 
-                if (opt.triggerFn)
+                if (opt.triggerFn && typeof opt.triggerFn === 'function')
                 {
                     opt.triggerFn();
                 }
@@ -41,17 +41,12 @@ const _getFooter = options => {
 };
 
 const _create = params => {
-    const mDialog   = $('<div class="modal-dialog">');
     const mContent  = $('<div class="modal-content">');
-
-    template  = $('<div class="modal dtms-modal">');
-
-    const confirmButton = $('<button type="button" class="btn btn-warning">OK</button>').on('click', () => {
-        template.remove();
-        backdrop.removeClass('modal-backdrop');
-    });
+    const confirmButton = $('<button type="button" class="btn btn-warning">OK</button>');
 
     let mHeader, mBody, mFooter = $('<div class="modal-footer">');
+
+    template = $('<div class="modal dtms-modal">');
 
     if (params.title)
     {
@@ -71,6 +66,7 @@ const _create = params => {
                 params.onConfirm();
             }
 
+            backdrop.removeClass('modal-backdrop');
             template.remove();
         });
 
@@ -83,14 +79,14 @@ const _create = params => {
     }
 
     return template.append(
-        mDialog.append(
-            mContent.append(
-                mHeader,
-                mBody,
-                mFooter
+            $('<div class="modal-dialog">').append(
+                mContent.append(
+                    mHeader,
+                    mBody,
+                    mFooter
+                )
             )
-        )
-    );
+        );
 };
 
 module.exports = {

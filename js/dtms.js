@@ -6,11 +6,9 @@ const Notifications = require('./notificationModal');
 const TeamModal     = require('./teamModal');
 
 // HTML CONSTANTS
-const characterDialog = $('#create-form');
-const characterButton = $('#create-character');
-const characterInput  = $('#inlineFormInputGroup');
-const moneyText       = $('#money-text');
 const notificationBlock = $('#notifications');
+const characterDialog = $('#create-form');
+const moneyText       = $('#money-text');
 const dateText        = document.getElementById("date-text");
 const costsText       = $('#costs-text');
 const costsDescr      = $('#costs-description');
@@ -20,7 +18,7 @@ const createTeamBlock = $('#create-team');
 const continueBtn     = $('#continue');
 const createTeamBtn   = $('#create-team-btn');
 
-let teamCreationBtn, teamCreationInput, backDrop;
+let backDrop;
 
 let teamId, managerId;          // unique ids
 let day, week, month, year;     // date
@@ -91,6 +89,7 @@ const Game = {
                     triggerFn: () => {
                         data.triggers[i]();
                         Game.unpause();
+                        backDrop = null;
                     }
                 });
             }
@@ -124,18 +123,20 @@ const Game = {
             this.events.forEach(function (e) {
                 if ( e.eventId === obj.eventId )
                 {
-                    return uniqueId = false;
+                    uniqueId = false;
                 }
             });
 
-            if (uniqueId)
+            if (!uniqueId)
             {
-                this.events.push(obj);
+                throw new Error('UniqueID Event Error: check events ids for uniqueness!');
             }
+
+            return this.events.push(obj);
         }
         else
         {
-            this.events.push(obj);
+            return this.events.push(obj);
         }
     },
 
@@ -213,10 +214,10 @@ const Game = {
 
                                 Game.pause();
 
+                                backdrop.addClass('modal-backdrop');
                                 notificationBlock.append(notification);
                                 notificationBlock.show();
 
-                                backdrop.addClass('modal-backdrop');
                                 backDrop = backdrop;
 
                                 if (this.notifications.indexOf(notification) > -1)
@@ -296,17 +297,19 @@ const Game = {
                 }
             };
 
-            const createTeamEvent = e => {
-                MAIN_CHARACTER.createTeam(teamCreationInput.val());
-            };
-
             const createTeamModalShow = e => {
-                notificationBlock.append(TeamModal.create());
+                Game.pause();
 
-                teamCreationBtn    = $('#team-name-btn');
-                teamCreationInput  = $('#team-name');
-
-                teamCreationBtn.on('click', createTeamEvent);
+                notificationBlock.append(TeamModal.create({
+                    onClose     : () => {
+                        Game.unpause();
+                    },
+                    onCreate    : props => {
+                        MAIN_CHARACTER.createTeam(props.name.trim());
+                        console.log(MAIN_CHARACTER);
+                        Game.unpause();
+                    }
+                }));
             };
 
             MAIN_CHARACTER = manager;
@@ -364,19 +367,15 @@ class Manager {
                 msg: "A friend of yours invited you to a lan party to play custom W3 maps. Are you going?",
                 options: ['Yes', 'Sorry, I\'m Pass'],
                 triggers: [
-                    () => {
-                        Game.createNotification({
+                    () => Game.createNotification({
                             title: 'Info',
                             msg: 'On the way there you found a 5 bucks on the road, it surely was worth coming!',
                             onConfirm : () => this.changeMoney(+5)
-                        });
-                    },
-                    () => {
-                        Game.createNotification({
+                        }),
+                    () => Game.createNotification({
                             title: 'Info',
                             msg: 'You spent whole day studying, what a loser!'
-                        });
-                    }
+                        })
                 ]
             }
         });
@@ -441,6 +440,15 @@ class Team {
             4   : null,
             5   : null
         };
+
+        Game.pushEvent({
+            eventId : 'DTMS-EVENT-NEWTEAM#' + this.id,
+            triggerDate : Game.daysToDate(1),
+            notification : {
+                title : 'News',
+                msg : `New team under the name "${title}" was recently registered by ${this.manager.name}. Seems like they are planning something terrible in the good sense of this word. "Wait for it!"`
+            }
+        });
     }
 
     // TODO make finding players
