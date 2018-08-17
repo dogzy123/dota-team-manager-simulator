@@ -261,7 +261,7 @@ const Game = {
                         })
                     }
 
-                    if (MAIN_CHARACTER.teams.length === 2)
+                    if (MAIN_CHARACTER.teams.length >= 2)
                     {
                         createTeamBtn.attr('disabled', true);
                     }
@@ -489,7 +489,27 @@ class Team {
                             )
                         )
                     ),
-                    $('<div class="row">'),
+                    $('<div class="row">').append(
+                        $('<div class="col-sm-12">').append(
+                            $('<div class="team-body clearfix">').append(
+                                $('<div class="player-wrap">').append(
+                                    $('<div class="player">')
+                                ),
+                                $('<div class="player-wrap">').append(
+                                    ('<div class="player">')
+                                ),
+                                $('<div class="player-wrap">').append(
+                                    ('<div class="player">')
+                                ),
+                                $('<div class="player-wrap">').append(
+                                    ('<div class="player">')
+                                ),
+                                $('<div class="player-wrap">').append(
+                                    ('<div class="player">')
+                                )
+                            )
+                        )
+                    ),
                     $('<div class="row">')
                 )
             )
@@ -519,7 +539,6 @@ class Team {
 
         setTimeout(() => clearInterval(intervalId), DURATION);
     };
-
 }
 
 const reInitialize = () => {
@@ -544,6 +563,6 @@ const reInitialize = () => {
 };
 
 module.exports = {
-    Game : Game,
+    Game    : Game,
     Manager : Manager
 };

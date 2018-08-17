@@ -13,13 +13,81 @@ body {
     text-align: left;
 }
 
+#create-team {
+    margin-bottom: 20px;
+}
+
+#create-form {
+    margin-top: 100px;
+    background-color: #1d1e1f;
+    border: 1px solid azure;
+    margin-left: auto;
+    margin-right: auto;
+    color : azure;
+    height: 210px;
+    width: 600px;
+    transition: opacity 0.15s ease-in;
+}
+
+#backdrop {
+    opacity: 0;
+    transition: opacity 0.11s ease-in;
+}
+
+#team-name-btn {
+    width: 100%;
+}
+
+#team-list > .row {
+    margin-bottom: 25px;
+}
+
+#menu {
+    width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 100px;
+}
+
+#costs-description {
+    margin-left: 5px;
+    opacity: 0;
+    transition: opacity 0.11s ease-in;
+}
+
+#costs-text {
+    opacity: 0;
+    transition: opacity 0.11s ease-in;
+}
+
 .text {
     font-size: 22px;
     font-weight: 500;
 }
 
+.player {
+    border: 1px solid azure;
+    border-radius: 4px;
+    width: 64px;
+    height: 64px;
+}
+
+.clearfix {
+    display: inline-block;
+    width: 100%;
+}
+
+.player-wrap {
+    float: left;
+    padding: 5px 10px;
+}
+
 .team-header {
     position: relative;
+    text-align: center;
+}
+
+.team-body {
     text-align: center;
 }
 
@@ -36,10 +104,6 @@ body {
 .team-close:hover {
     cursor: pointer;
     color: #942a2a;
-}
-
-#team-list > .row {
-    margin-bottom: 25px;
 }
 
 .team {
@@ -64,24 +128,6 @@ body {
     font-weight: 500;
 }
 
-#menu {
-    width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 100px;
-}
-
-#costs-description {
-    margin-left: 5px;
-    opacity: 0;
-    transition: opacity 0.11s ease-in;
-}
-
-#costs-text {
-    opacity: 0;
-    transition: opacity 0.11s ease-in;
-}
-
 .dtms-modal {
     color : #1d1e1f;
     display: block;
@@ -91,26 +137,6 @@ body {
     opacity: 1 !important;
 }
 
-#create-form {
-    margin-top: 100px;
-    background-color: #1d1e1f;
-    border: 1px solid azure;
-    margin-left: auto;
-    margin-right: auto;
-    color : azure;
-    height: 210px;
-    width: 600px;
-    transition: opacity 0.15s ease-in;
-}
-
-#backdrop {
-    opacity: 0;
-    transition: opacity 0.11s ease-in;
-}
-
-#team-name-btn {
-    width: 100%;
-}
 
 .btn-team {
     padding: 50px 150px;

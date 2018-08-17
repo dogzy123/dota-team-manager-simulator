@@ -1,16 +1,13 @@
-// electron
 const {BrowserWindow, app} = require('electron');
-// path
 const path = require('path');
 
 let mainWindow, url;
 
 app.on('ready', function () {
     mainWindow = new BrowserWindow({
-        fullscreen      : true,
+        fullscreen      : false,
         useContentSize  : true,
         resizable       : false,
-        minWidth        : 800,
         backgroundColor : "#19273c"
     });
 
@@ -26,4 +23,11 @@ app.on('ready', function () {
 
     mainWindow.once('ready-to-show', () => mainWindow.show());
     mainWindow.on('closed', () => mainWindow = null);
+});
+
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin')
+    {
+        app.quit();
+    }
 });
