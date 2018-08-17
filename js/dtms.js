@@ -6,6 +6,7 @@ const Notifications = require('./notificationModal');
 const TeamModal     = require('./teamModal');
 
 // HTML CONSTANTS
+const teamsBlock      = $('#team-list');
 const notificationBlock = $('#notifications');
 const characterDialog = $('#create-form');
 const moneyText       = $('#money-text');
@@ -175,6 +176,8 @@ const Game = {
             const update = () => {
                 if (!Game.paused)
                 {
+                    console.log(MAIN_CHARACTER); // debug main char
+
                     day = day + 1;
 
                     if (day > 7 )
@@ -248,6 +251,7 @@ const Game = {
                         } );
                     }
 
+                    // main character props handlers
                     if (MAIN_CHARACTER.money < 1) // lost
                     {
                         this.createNotification({
@@ -255,6 +259,11 @@ const Game = {
                             msg : 'You lost! Try again. Maybe you should\'ve get another players in your team. :D',
                             onConfirm : () => clearInterval(time)
                         })
+                    }
+
+                    if (MAIN_CHARACTER.teams.length === 2)
+                    {
+                        createTeamBtn.attr('disabled', true);
                     }
                 }
             };
@@ -378,25 +387,29 @@ class Manager {
             }
         });
 
-        // check for main character
+       /* // check for main character
         if (this.id === 1)
         {
             for (let event of decisions.inst.makeEvents(this, Game)) {
                 Game.pushEvent(event);
             }
-        }
+        }*/
     }
 
     createTeam (teamTitle) {
-        this.teams.push(new Team( teamTitle, this ));
+        let team = new Team( teamTitle, this );
+
+        this.teams.push(team);
+
+        teamsBlock.append(
+            team.makeContext()
+        );
+
+        return team;
     }
 
     disbandTeam (teamId) {
         this.teams = this.teams.filter( el => el.id !== teamId );
-    }
-
-    getTeams () {
-        return this.teams;
     }
 
     changeMoney (amount, description) {
@@ -428,6 +441,7 @@ class Team {
     constructor (title = "Default team", managerData) {
         this.id         = teamId = teamId + 1;
         this.title      = title;
+        this.context    = null;
         this.manager    = managerData;
         this.players    = [];
         this.progress   = 0;
@@ -447,6 +461,39 @@ class Team {
                 msg : `New team under the name "${title}" was recently registered by ${this.manager.name}. Seems like they are planning something terrible in the good sense of this word. "Wait for it!"`
             }
         });
+
+        return this;
+    }
+
+    makeContext () {
+        const teamTemplate = $('<div class="team">');
+
+        const teamTitle = $('<span class="text">'+ this.title +'</span>');
+        const disbandTeam = $('<span class="team-close">&times;</span>');
+
+        disbandTeam.on('click', e => {
+            this.manager.disbandTeam(this.id);
+            this.context.remove();
+
+            createTeamBtn.attr('disabled', false);
+        });
+
+        return this.context = $('<div class="row">').append(
+            $('<div class="col-sm-12">').append(
+                teamTemplate.append(
+                    $('<div class="row">').append(
+                        $('<div class="col-sm-12">').append(
+                            $('<div class="team-header">').append(
+                                teamTitle,
+                                disbandTeam
+                            )
+                        )
+                    ),
+                    $('<div class="row">'),
+                    $('<div class="row">')
+                )
+            )
+        )
     }
 
     // TODO make finding players
@@ -486,9 +533,10 @@ const reInitialize = () => {
     year        = 1;
 
     dateText.innerHTML = `Day ${day} Week ${week} Month ${month} Year ${year}`;
-    Game.initialized = false;
-    Game.events = [];
-    Game.notifications = [];
+
+    Game.initialized    = false;
+    Game.events         = [];
+    Game.notifications  = [];
 
     document.body.removeEventListener('keydown', escMenuEvent);
 

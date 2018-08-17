@@ -18,6 +18,26 @@ body {
     font-weight: 500;
 }
 
+.team-header {
+    position: relative;
+    text-align: center;
+}
+
+.team-close {
+    position: absolute;
+    top: -13px;
+    right: 0;
+    font-size: 26px;
+    padding: 5px 10px;
+    color: #f96666;
+    transition: color 0.2s ease-in-out;
+}
+
+.team-close:hover {
+    cursor: pointer;
+    color: #942a2a;
+}
+
 #team-list > .row {
     margin-bottom: 25px;
 }

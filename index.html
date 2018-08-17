@@ -1,98 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <link href="https://fonts.googleapis.com/css?family=Quicksand:400,500,700" rel="stylesheet">
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/dtms-styles.css">
-    <title>Dota Team Manager Simulator</title>
-</head>
-<body>
-    <div id="game-document" class="container-fluid">
-        <div id="game" style="display:none;">
-            <div class="row">
-                <div class="col-sm-4">
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div id="date">
-                                <span id="date-text" class="text">Day 1 Week 1 Month 1 Year 1</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <div id="money">
-                                <span id="money-text" class="text"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <span id="costs-text" class="text"></span>
-                            <span id="costs-description" class="text"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-4"></div>
-                <div class="col-sm-4">
-                    <div id="team-list">
+    <head>
+        <meta charset="UTF-8">
+        <link href="https://fonts.googleapis.com/css?family=Quicksand:400,500,700" rel="stylesheet">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/dtms-styles.css">
+        <title>Dota Team Manager Simulator</title>
+    </head>
+    <body>
+        <div id="game-document" class="container-fluid">
+            <div id="game" style="display:none;">
+                <div class="row">
+                    <div class="col-xl-4 col-lg-4 col-sm-5">
                         <div class="row">
                             <div class="col-sm-12">
-                                <div id="create-team" style="display: none;">
-                                    <button id="create-team-btn" type="button" class="btn btn-outline-warning btn-lg btn-block">Create team</button>
+                                <div id="date">
+                                    <span id="date-text" class="text">Day 1 Week 1 Month 1 Year 1</span>
                                 </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="team"></div>
+                                <div id="money">
+                                    <span id="money-text" class="text"></span>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
-                                <div class="team"></div>
+                                <span id="costs-text" class="text"></span>
+                                <span id="costs-description" class="text"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4 col-lg-2 col-sm-2"></div>
+                    <div class="col-xl-4 col-lg-6 col-sm-5">
+                        <div id="team-list">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div id="create-team" style="display: none;">
+                                        <button id="create-team-btn" type="button" class="btn btn-outline-warning btn-lg btn-block">Create team</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <div id="notifications"></div>
             </div>
-            <div id="notifications"></div>
-        </div>
-        <div id="menu">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <button type="button" id="continue" class="btn btn-secondary btn-lg btn-block" style="display: none;">Continue</button>
-                        <button type="button" id="new-game" class="btn btn-secondary btn-lg btn-block">New Game</button>
-                        <button type="button" id="exit"     class="btn btn-secondary btn-lg btn-block">Exit</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="create-form" style="display: none; opacity: 0;">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-12" style="text-align: center">
-                        <h2>Character</h2>
-                    </div>
-                </div>
-                <form class="form-group row" style="margin-top : 30px; text-align: center">
-                    <div class="col-sm-9">
-                        <div class="input-group" style="height: 100%">
-                            <label for="inlineFormInputGroup" class="input-group-addon">Name</label>
-                            <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="Player">
+            <div id="menu">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <button type="button" id="continue" class="btn btn-secondary btn-lg btn-block" style="display: none;">Continue</button>
+                            <button type="button" id="new-game" class="btn btn-secondary btn-lg btn-block">New Game</button>
+                            <button type="button" id="exit"     class="btn btn-secondary btn-lg btn-block">Exit</button>
                         </div>
                     </div>
-                    <div class="col-sm-3">
-                        <button type="button" id="create-character" class="btn btn-secondary btn-lg">OK</button>
-                    </div>
-                </form>
+                </div>
             </div>
-        </div>
-        <div id="backdrop"></div>
-    </div>
+            <div id="create-form" style="display: none; opacity: 0;">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-sm-12" style="text-align: center">
+                            <h2>Character</h2>
+                        </div>
+                    </div>
+                    <form class="form-group row" style="margin-top : 30px; text-align: center">
+                        <div class="col-sm-9">
+                            <div class="input-group" style="height: 100%">
+                                <label for="inlineFormInputGroup" class="input-group-addon">Name</label>
+                                <input type="text" class="form-control" id="inlineFormInputGroup" placeholder="Player">
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="button" id="create-character" class="btn btn-secondary btn-lg">OK</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-    <script src="js/config.js"></script>
-    <script src="js/menu.js"></script>
-</body>
+            <div id="backdrop"></div>
+        </div>
+
+        <script src="js/config.js"></script>
+        <script src="js/menu.js"></script>
+    </body>
 </html>
