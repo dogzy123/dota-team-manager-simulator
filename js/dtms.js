@@ -1,6 +1,4 @@
-// players database temporary deleted
-//const PLAYERS_DB = players.players;  //array of players
-
+const {PLAYERS}     = require('./playersDB');
 const decisions     = require('./decisions.js');
 const Notifications = require('./notificationModal');
 const TeamModal     = require('./teamModal');
@@ -466,10 +464,14 @@ class Team {
     }
 
     makeContext () {
-        const teamTemplate = $('<div class="team">');
+        const teamTemplate      = $('<div class="team">');
+        const teamTitle         = $('<span class="text">'+ this.title +'</span>');
+        const disbandTeam       = $('<span class="team-close">&times;</span>');
+        const findRandomsBtn    = $('<button class="btn btn-lg btn-warning">Find 5 random players</button>');
 
-        const teamTitle = $('<span class="text">'+ this.title +'</span>');
-        const disbandTeam = $('<span class="team-close">&times;</span>');
+        findRandomsBtn.on('click', e => {
+            this.find5Randoms();
+        });
 
         disbandTeam.on('click', e => {
             this.manager.disbandTeam(this.id);
@@ -510,13 +512,32 @@ class Team {
                             )
                         )
                     ),
-                    $('<div class="row">')
+                    $('<div class="row">').append(
+                        $('<div class="col-sm-12">').append(
+                            $('<div class="team-footer">').append(
+                                findRandomsBtn
+                            )
+                        )
+                    )
                 )
             )
         )
     }
 
     // TODO make finding players
+
+    find5Randoms () {
+        let randomNumber, filteredPlayers = PLAYERS;
+
+        for (let i = 0; i < 5; i++)
+        {
+            randomNumber = Math.floor(Math.random() * filteredPlayers.length);
+
+            this.players.push(filteredPlayers[randomNumber]);
+
+            filteredPlayers = filteredPlayers.filter( player => player.nick !== filteredPlayers[randomNumber].nick);
+        }
+    }
 
     fillPosition (player, position) {
         if (!this.players.length)
