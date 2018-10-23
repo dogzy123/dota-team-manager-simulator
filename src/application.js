@@ -1,9 +1,8 @@
 import {createStore} from "redux";
 import menuReducer from "./reducers/menu";
-import {toggleMenu} from "./actions/actions";
+import {STATUS, toggleMenu} from "./actions/actions";
 import {MenuBlock} from "./components/constants";
 import {Menu} from "./components/menu";
-import {EXIT_GAME_STATUS} from "./actions/statuses";
 
 export const store = createStore(menuReducer);
 
@@ -15,7 +14,7 @@ store.subscribe( () => {
 
     Menu.render(store.getState());
 
-    if (store.getState().status === EXIT_GAME_STATUS)
+    if (store.getState().status === STATUS.EXIT_GAME_STATUS)
     {
         remote.getCurrentWindow().close();
     }
