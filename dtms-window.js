@@ -5,7 +5,7 @@ let mainWindow, url;
 
 app.on('ready', function () {
     mainWindow = new BrowserWindow({
-        fullscreen      : false,
+        fullscreen      : true,
         useContentSize  : true,
         resizable       : false,
         backgroundColor : "#19273c"
@@ -18,6 +18,7 @@ app.on('ready', function () {
     });
 
     mainWindow.loadURL(url);
+    //mainWindow.setMenu(null);
 
     mainWindow.webContents.openDevTools();
 

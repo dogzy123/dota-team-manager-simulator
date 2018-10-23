@@ -17,6 +17,15 @@
   },
   "homepage": "https://github.com/dogzy123/dota-team-manager-simulator#readme",
   "dependencies": {
-    "electron": "^1.8.3"
+    "electron": "^1.8.3",
+    "redux": "^4.0.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "babel-core": "^7.0.0-0",
+    "babel-loader": "^7.1.5",
+    "webpack": "^4.21.0",
+    "webpack-cli": "^3.1.2"
   }
 }
