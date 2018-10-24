@@ -1,16 +1,19 @@
 import Component from "../component";
 import {store} from "../application";
-import {STATUS, updateStatus} from "../actions/actions";
+import {gameStatus, STATUS} from "../actions/actions";
 
-const ContinueBtn = new Component('button.btn btn-secondary btn-lg btn-block$Continue');
+const ContinueBtn = new Component('button.btn btn-secondary btn-lg btn-block$Continue')
+    .addHandler( 'click', e => {
+        store.dispatch(gameStatus(STATUS.PLAYING));
+    } );
 const NewGameBtn  = new Component('button.btn btn-secondary btn-lg btn-block$New Game')
     .addHandler( 'click', e => {
-        store.dispatch(updateStatus(STATUS.NEW_GAME_STATUS));
+        store.dispatch(gameStatus(STATUS.NEW_GAME_STATUS));
     } );
 
 const ExitBtn     = new Component('button.btn btn-secondary btn-lg btn-block$Exit')
     .addHandler( 'click', e => {
-        store.dispatch(updateStatus(STATUS.EXIT_GAME_STATUS));
+        store.dispatch(gameStatus(STATUS.EXIT_GAME_STATUS));
     } );
 
 export const Menu = new Component("div.container")
@@ -26,5 +29,5 @@ export const Menu = new Component("div.container")
             )
     )
     .onStateChange( (state, context) => {
-        context.classList.toggle('hidden', !state.menu.shown);
+        context.classList.toggle('hidden', state.game.status !== STATUS.PAUSED_STATUS && state.game.status !== STATUS.PREPARING);
     } );

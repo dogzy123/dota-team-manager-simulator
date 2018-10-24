@@ -21,7 +21,7 @@ body {
     margin-bottom: 20px;
 }
 
-#create-form {
+#create-form > .container {
     margin-top: 100px;
     background-color: #1d1e1f;
     border: 1px solid azure;
@@ -31,6 +31,10 @@ body {
     height: 210px;
     width: 600px;
     transition: opacity 0.15s ease-in;
+}
+
+#create-form > form {
+    margin-top : 30px;
 }
 
 #backdrop {

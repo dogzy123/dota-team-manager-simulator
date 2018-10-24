@@ -1,37 +1,57 @@
-const getProp = (string, prop) => {
-    // "#id.class$html"
-    let propValue = "";
+import {gameStatus, STATUS} from "./actions/actions";
+import {MenuBlock, CreateCharacterBlock} from "./components/constants";
+import {Menu} from "./components/menu";
+import {store} from "./application";
+import {NewGameDialog} from "./components/new_game_dialog";
 
-    if (string.indexOf(prop) > -1)
+const remote = window.require('electron').remote;
+
+export const onStateUpdateEvents = () => {
+    // menu render
+    Menu.render(store.getState());
+    NewGameDialog.render(store.getState());
+
+    if (store.getState().game.status === STATUS.EXIT_GAME_STATUS)
     {
-        let leftString = string.substring(string.indexOf(prop) + 1);
-
-        let end = leftString.match(/[#.$]/) ? leftString.match(/[#.$]/).index : leftString.length;
-
-        propValue = leftString.substring(0, end);
+        remote.getCurrentWindow().close();
     }
 
-    return propValue;
+    if (store.getState().game.status === STATUS.NEW_GAME_STATUS)
+    {
+        document.body.style.backgroundColor = "#000";
+        document.body.style.color = "#000";
+    }
 };
 
-export const convertToDom = ( string ) => {
-    // div#menu.wrapper$Menu
-    const el   = document.createElement(string.split(/[.#$]/g)[0]);
-    const tags = string.match(/[.#$]/g);
+export const PreLoadedEvents = () => {
+    Menu.render(store.getState());
+    NewGameDialog.render(store.getState());
 
-    tags.map( tag => {
-        switch (tag) {
-            case "#":
-                el.setAttribute('id', getProp(string,'#'));
-                break;
-            case ".":
-                el.setAttribute('class', getProp(string, '.'));
-                break;
-            case "$":
-                el.innerHTML = getProp(string,'$');
-                break;
+    // menu toggling
+    document.body.addEventListener('keydown', e => {
+        if (e.keyCode === 27)
+        {
+            if (store.getState().game.status !== STATUS.PREPARING)
+            {
+                const status = store.getState().game.status === STATUS.PAUSED_STATUS ? STATUS.PLAYING : STATUS.PAUSED_STATUS;
+                store.dispatch(gameStatus(status));
+            }
         }
-    } );
+    });
+};
 
-    return el;
+export const PreLoadedDom = () => {
+    // menu context
+    MenuBlock.appendChild(
+        Menu.getContext()
+    );
+
+    CreateCharacterBlock.appendChild(
+        NewGameDialog.getContext()
+    );
+};
+
+export const preload = () => {
+    PreLoadedEvents();
+    PreLoadedDom();
 };

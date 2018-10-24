@@ -1,21 +1,33 @@
-export const TOGGLE_MENU    = "TOGGLE_MENU";
-export const UPDATE_STATUS  = "UPDATE STATUS";
+export const UPDATE_GAME_STATUS     = "UPDATE GAME STATUS";
+export const CREATE_GAME_MANAGER    = "CREATE GAME MANAGER";
+export const UPDATE_GAME_MANAGER    = "UPDATE GAME MANAGER";
 
 export const STATUS       = {
     NEW_GAME_STATUS     : "NEW GAME",
-    EXIT_GAME_STATUS    : "EXIT GAME"
+    EXIT_GAME_STATUS    : "EXIT GAME",
+    PAUSED_STATUS       : "PAUSED",
+    PLAYING             : "PLAYING",
+    PREPARING           : "GAME PREPARING",
+    TOGGLE_PAUSE        : "TOGGLE PAUSE"
 };
 
-export const toggleMenu = state => {
+export const gameStatus = status => {
     return {
-        type    : TOGGLE_MENU,
-        shown   : state
+        type        : UPDATE_GAME_STATUS,
+        status      : status
     }
 };
 
-export const updateStatus = state => {
+export const gameManagerCreate = manager => {
     return {
-        type    : UPDATE_STATUS,
-        status  : state
+        type        : CREATE_GAME_MANAGER,
+        manager     : manager
+    }
+};
+
+export const gameManagerUpdate = props => {
+    return {
+        type        : UPDATE_GAME_MANAGER,
+        props       : props
     }
 };

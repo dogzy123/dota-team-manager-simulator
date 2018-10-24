@@ -1,32 +1,20 @@
-import {createStore} from "redux";
-import menuReducer from "./reducers/menu";
-import {STATUS, toggleMenu} from "./actions/actions";
-import {MenuBlock} from "./components/constants";
-import {Menu} from "./components/menu";
+import {combineReducers, createStore} from "redux";
+import gameReducer  from "./reducers/game";
+import {onStateUpdateEvents, preload} from "./utils";
 
-export const store = createStore(menuReducer);
+const dtmsApp = combineReducers({
+    game    : gameReducer
+});
 
-const remote = window.require('electron').remote;
+export const store = createStore(dtmsApp);
+
+preload();
 
 store.subscribe( () => {
     // debug in console
     console.log(store.getState());
 
-    Menu.render(store.getState());
-
-    if (store.getState().status === STATUS.EXIT_GAME_STATUS)
-    {
-        remote.getCurrentWindow().close();
-    }
+    onStateUpdateEvents();
 } );
 
-document.body.addEventListener('keydown', function (e) {
-    if (e.keyCode === 27)
-    {
-        store.dispatch(toggleMenu(!store.getState().menu.shown))
-    }
-});
-
-MenuBlock.appendChild(
-    Menu.getContext()
-);
+console.log(store.getState());

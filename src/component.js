@@ -1,4 +1,40 @@
-import {convertToDom} from "./utils";
+const getProp = (string, prop) => {
+    // "#id.class$html"
+    let propValue = "";
+
+    if (string.indexOf(prop) > -1)
+    {
+        let leftString = string.substring(string.indexOf(prop) + 1);
+
+        let end = leftString.match(/[#.$]/) ? leftString.match(/[#.$]/).index : leftString.length;
+
+        propValue = leftString.substring(0, end);
+    }
+
+    return propValue;
+};
+
+const convertToDom = string => {
+    // div#menu.wrapper$Menu
+    const el   = document.createElement(string.split(/[.#$]/g)[0]);
+    const tags = string.match(/[.#$]/g);
+
+    tags.map( tag => {
+        switch (tag) {
+            case "#":
+                el.setAttribute('id', getProp(string,'#'));
+                break;
+            case ".":
+                el.setAttribute('class', getProp(string, '.'));
+                break;
+            case "$":
+                el.innerHTML = getProp(string,'$');
+                break;
+        }
+    } );
+
+    return el;
+};
 
 export default class Component {
     constructor ( string ) {
@@ -8,8 +44,11 @@ export default class Component {
         return this;
     }
 
-    addHandler (e, fn) {
-        this.context.addEventListener(e, fn);
+    addHandler (event, fn) {
+        this.context.addEventListener(event, e => {
+            e.preventDefault();
+            fn();
+        });
 
         return this;
     }
