@@ -1,6 +1,7 @@
 export const UPDATE_GAME_STATUS     = "UPDATE GAME STATUS";
 export const CREATE_GAME_MANAGER    = "CREATE GAME MANAGER";
 export const UPDATE_GAME_MANAGER    = "UPDATE GAME MANAGER";
+export const SET_PRE_NAME           = "SET PRE NAME";
 
 export const STATUS       = {
     NEW_GAME_STATUS     : "NEW GAME",
@@ -22,6 +23,13 @@ export const gameManagerCreate = manager => {
     return {
         type        : CREATE_GAME_MANAGER,
         manager     : manager
+    }
+};
+
+export const gameManagerPreName = name => {
+    return {
+        type        : SET_PRE_NAME,
+        preName     : name
     }
 };
 

@@ -1,5 +1,5 @@
 import Component from "../component";
-import {gameManagerCreate, STATUS} from "../actions/actions";
+import {gameManagerCreate, gameManagerPreName, STATUS} from "../actions/actions";
 import {store} from "../application";
 import Manager from "../manager";
 
@@ -20,13 +20,16 @@ export const NewGameDialog = new Component('div.container')
                             .subscribe(
                                 new Component("label.input-group-addon$Name"),
                                 new Component("input.form-control")
+                                    .addHandler('change', e => {
+                                        store.dispatch(gameManagerPreName(e.target.value));
+                                    } )
                             )
                     ),
                 new Component("div.col-sm-3")
                     .subscribe(
                         new Component("button.btn btn-secondary btn-lg$OK")
                             .addHandler('click', e => {
-                                store.dispatch(gameManagerCreate(new Manager("Test")));
+                                store.dispatch(gameManagerCreate(new Manager(store.getState().game.preName)));
                             } )
                     )
             )

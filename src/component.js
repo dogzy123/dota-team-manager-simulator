@@ -47,7 +47,7 @@ export default class Component {
     addHandler (event, fn) {
         this.context.addEventListener(event, e => {
             e.preventDefault();
-            fn();
+            fn(e);
         });
 
         return this;

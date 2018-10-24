@@ -1,4 +1,4 @@
-import {STATUS, CREATE_GAME_MANAGER, UPDATE_GAME_MANAGER, UPDATE_GAME_STATUS} from "../actions/actions";
+import {STATUS, CREATE_GAME_MANAGER, UPDATE_GAME_MANAGER, UPDATE_GAME_STATUS, SET_PRE_NAME} from "../actions/actions";
 
 const startState = {
     manager : {},
@@ -12,6 +12,13 @@ export default (state = startState, action) => {
                 ...state,
                 ...{
                     status  : action.status
+                }
+            };
+        case SET_PRE_NAME :
+            return {
+                ...state,
+                ...{
+                    preName: action.preName
                 }
             };
         case CREATE_GAME_MANAGER :
